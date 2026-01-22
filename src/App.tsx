@@ -16,15 +16,15 @@ const App = () => {
     width: 100,
     height: 60,
     distanceFromLast: 0,
-    x: 50,
-    y: 50,
+    x: 0,
+    y: 0,
     color: defaultOpeningColor
   }, {
     type: 'circle',
     radius: 80,
     distanceFromLast: 20,
-    x: 200,
-    y: 100,
+    x: 100,
+    y: 600,
     color: defaultOpeningColor
   }]);
   return (
