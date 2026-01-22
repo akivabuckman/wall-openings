@@ -29,7 +29,7 @@ const App = () => {
   }]);
   return (
     <div className="flex h-screen w-screen bg-zinc-950 dark">
-      <Sidebar openings={openings} />
+      <Sidebar openings={openings} setOpenings={setOpenings} />
       <MainPanel openings={openings} />
     </div>
   );
