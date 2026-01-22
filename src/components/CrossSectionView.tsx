@@ -3,8 +3,10 @@
 import { useRef, useEffect, useState } from "react";
 import { Stage, Layer, Rect } from "react-konva";
 import MeasurementBar from "./MeasurementBar";
+import { Opening } from "../types";
+import { renderOpening } from "../utils.tsx";
 
-const CrossSectionView = () => {
+const CrossSectionView = ({ openings }: { openings: Opening[] }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<{ width: number; height: number }>({ width: 400, height: 200 });
 
@@ -29,7 +31,7 @@ const CrossSectionView = () => {
           <Stage width={size.width} height={size.height} className="rounded shadow">
             <Layer>
               <Rect x={0} y={0} width={size.width} height={size.height} fill="gray" />
-              <Rect x={0} y={0} width={100} height={60} fill="#38bdf8" shadowBlur={10} draggable/>
+              {openings.map((opening, idx) => renderOpening(opening, idx))}
             </Layer>
           </Stage>
         </div>

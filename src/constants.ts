@@ -1,0 +1,1 @@
+export const defaultOpeningColor = "#0000ff";
