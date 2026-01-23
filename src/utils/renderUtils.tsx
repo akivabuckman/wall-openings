@@ -1,5 +1,6 @@
+import { Label, Tag, Text } from "react-konva";
 import { Circle, Group, Line, Rect, Shape } from "react-konva";
-import { Opening } from "./types";
+import { Opening } from "../types";
 import { Dispatch, SetStateAction } from "react";
 
 export function renderOpening(
@@ -18,7 +19,13 @@ export function renderOpening(
 
 function handleDragMove(e: { target: { position: () => { x: number; y: number } } }, setOpenings: Dispatch<SetStateAction<Opening[]>>, idx: number) {
   const { x, y } = e.target.position();
-  setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, x, y } : o));
+  setOpenings(prev => prev.map((o, i) => {
+    if (i !== idx) return o;
+    if (o.type === 'rectangle') {
+      return { ...o, x, y: y - o.height };
+    }
+    return { ...o, x, y };
+  }));
 }
 
 function renderRectangleOpening(
@@ -38,7 +45,7 @@ function renderRectangleOpening(
     <Group
       key={idx}
       x={opening.x}
-      y={opening.y}
+      y={opening.y + opening.height}
       draggable
       dragBoundFunc={pos => ({ ...pos, x: Math.max(0, Math.round(pos.x)) })}
       scaleY={-1}
@@ -125,3 +132,55 @@ function renderCircleOpening(
   );
 }
 
+export function renderMeasurement({ x, y = 0, label }: { x: number; y?: number; label?: string }) {
+  const tickLength = 16;
+  const tickAngle = 45 * (Math.PI / 180); // 45 degrees in radians
+  // Calculate tick offsets
+  const dx = tickLength * Math.cos(tickAngle);
+  const dy = tickLength * Math.sin(tickAngle);
+
+  // Main horizontal line
+  const mainLine = (
+    <Line
+      points={[0, y, x, y]}
+      stroke="#222"
+      strokeWidth={2}
+      key="main"
+    />
+  );
+
+  // Left 45° tick
+  const leftTick = (
+    <Line
+      points={[0, y, dx, y - dy]}
+      stroke="#222"
+      strokeWidth={2}
+      key="leftTick"
+    />
+  );
+
+  // Right 45° tick
+  const rightTick = (
+    <Line
+      points={[x, y, x - dx, y - dy]}
+      stroke="#222"
+      strokeWidth={2}
+      key="rightTick"
+    />
+  );
+
+  // Label (centered above the line, no background shape)
+  const labelNode = (
+    <Text
+      x={x / 2}
+      y={y - 32}
+      text={label ?? x.toString()}
+      fontSize={18}
+      fill="#222"
+      align="center"
+      key="label"
+    />
+  );
+
+  return [mainLine, leftTick, rightTick, labelNode];
+}

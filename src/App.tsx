@@ -4,6 +4,7 @@ import MainPanel from './components/MainPanel';
 import { Opening } from './types';
 import { useState, useEffect } from 'react';
 import { defaultOpeningColor } from './constants';
+import { sortAndFromPrevious } from "./utils/utils";
 
 
 
@@ -12,7 +13,6 @@ const App = () => {
     type: 'rectangle',
     width: 100,
     height: 60,
-    distanceFromLast: 0,
     x: 0,
     y: 0,
     color: defaultOpeningColor,
@@ -20,37 +20,30 @@ const App = () => {
   }, {
     type: 'circle',
     radius: 80,
-    distanceFromLast: 20,
     x: 0,
     y: 0,
     color: defaultOpeningColor,
     id: 1
+  },{
+    type: 'rectangle',
+    width: 100,
+    height: 60,
+    x: 0,
+    y: 0,
+    color: defaultOpeningColor,
+    id: 2
   }]);
-  const [openingIndexes, setOpeningIndexes] = useState<{ openingId: number }[]>([]);
+  const [openingIndexes, setOpeningIndexes] = useState<{ openingId: number, fromPrevious: number }[]>([]);
 
   useEffect(() => {
-    const sorted = openings
-      .map((o, i) => ({ openingId: o.id ?? i, x: o.x }))
-      .sort((a, b) => {
-        if (a.x !== b.x) return a.x - b.x;
-        return a.openingId - b.openingId;
-      })
-      .map(({ openingId }) => ({ openingId }));
-    if (
-      openingIndexes.length !== sorted.length ||
-      openingIndexes.some((item, idx) => item.openingId !== sorted[idx].openingId)
-    ) {
-      setOpeningIndexes(sorted);
-    }
+    const sorted =sortAndFromPrevious(openings);
+    setOpeningIndexes(sorted);
   }, [openings]);
 
-  useEffect(() => {
-    console.log(openingIndexes)
-  }, [openingIndexes]);
   return (
     <div className="flex h-screen bg-zinc-950 dark">
-      <Sidebar openings={openings} setOpenings={setOpenings} />
-      <MainPanel openings={openings} setOpenings={setOpenings} />
+      <Sidebar openings={openings} setOpenings={setOpenings} openingIndexes={openingIndexes} setOpeningIndexes={setOpeningIndexes} />
+      <MainPanel openings={openings} setOpenings={setOpenings} openingIndexes={openingIndexes} />
     </div>
   );
 };

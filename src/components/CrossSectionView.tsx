@@ -5,9 +5,9 @@ import type { KonvaEventObject } from 'konva/lib/Node';
 import { Stage, Layer, Rect, Line } from "react-konva";
 import MeasurementBar from "./MeasurementBar";
 import { Opening } from "../types";
-import { renderOpening } from "../utils.tsx";
+import { renderOpening } from "../utils/renderUtils.tsx";
 
-const CrossSectionView = ({ openings, setOpenings, zoom = 1 }: { openings: Opening[], setOpenings: Dispatch<SetStateAction<Opening[]>>, zoom?: number }) => {
+const CrossSectionView = ({ openings, setOpenings, zoom = 1, openingIndexes }: { openings: Opening[], setOpenings: Dispatch<SetStateAction<Opening[]>>, zoom?: number, openingIndexes: { openingId: number, fromPrevious: number }[] }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<{ width: number; height: number }>({ width: 400, height: 200 });
 
@@ -58,7 +58,7 @@ const CrossSectionView = ({ openings, setOpenings, zoom = 1 }: { openings: Openi
 
 
   return (
-    <section className="flex-1 min-h-0 bg-zinc-800 rounded-t-lg shadow-inner flex flex-col items-center justify-center">
+    <section className="flex-1 min-h-0 rounded-t-lg shadow-inner flex flex-col items-center justify-center">
       <div className="w-full flex-1 flex flex-col">
         <div ref={containerRef} className="w-full flex-1 flex items-center justify-center">
           <Stage
@@ -87,7 +87,7 @@ const CrossSectionView = ({ openings, setOpenings, zoom = 1 }: { openings: Openi
             </Layer>
           </Stage>
         </div>
-        <MeasurementBar />
+        <MeasurementBar localZoom={localZoom} openingIndexes={openingIndexes} openings={openings}/>
       </div>
     </section>
   );
