@@ -36,7 +36,7 @@ const OpeningsList = ({ openings, setOpenings }: OpeningsListProps) => {
                   value={opening.x}
                   onChange={e => {
                     const newX = parseFloat(e.target.value);
-                    setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, x: isNaN(newX) ? 0 : newX } : o));
+                    setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, x: isNaN(newX) ? 0 : Math.max(newX, 0) } : o));
                   }}
                 />
               </div>
@@ -62,7 +62,7 @@ const OpeningsList = ({ openings, setOpenings }: OpeningsListProps) => {
                       value={opening.width}
                       onChange={e => {
                         const newWidth = parseFloat(e.target.value);
-                        setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, width: isNaN(newWidth) ? 0 : newWidth } : o));
+                        setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, width: isNaN(newWidth) ? 0 : Math.max(newWidth, 1) } : o));
                       }}
                     />
                   </div>
@@ -74,7 +74,7 @@ const OpeningsList = ({ openings, setOpenings }: OpeningsListProps) => {
                       value={opening.height}
                       onChange={e => {
                         const newHeight = parseFloat(e.target.value);
-                        setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, height: isNaN(newHeight) ? 0 : newHeight } : o));
+                        setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, height: isNaN(newHeight) ? 0 : Math.max(newHeight, 1) } : o));
                       }}
                     />
                   </div>
@@ -88,7 +88,7 @@ const OpeningsList = ({ openings, setOpenings }: OpeningsListProps) => {
                     value={opening.radius}
                     onChange={e => {
                       const newRadius = parseFloat(e.target.value);
-                      setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, radius: isNaN(newRadius) ? 0 : newRadius } : o));
+                      setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, radius: isNaN(newRadius) ? 0 : Math.max(newRadius, 1) } : o));
                     }}
                   />
                 </div>

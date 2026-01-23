@@ -26,36 +26,37 @@ function renderRectangleOpening(opening: Extract<Opening, { type: 'rectangle' }>
       x={opening.x}
       y={opening.y}
       draggable
+      scaleY={-1}
     >
       <Rect
-        width={opening.width}
-        height={opening.height}
-        fill="white"
-        stroke={opening.color}
-        strokeWidth={2}
+      width={opening.width}
+      height={opening.height}
+      fill="white"
+      stroke={opening.color}
+      strokeWidth={2}
       />
       <Shape
-        sceneFunc={(context, shape) => {
-          context.beginPath();
-          context.moveTo(x1, y1);
-          context.lineTo(x2, y2);
-          context.lineTo(x3, y3);
-          context.lineTo(0, 0);
-          context.closePath();
-          context.fillStrokeShape(shape);
-        }}
-        fill="black"
-        strokeEnabled={false}
+      sceneFunc={(context, shape) => {
+        context.beginPath();
+        context.moveTo(x1, y1);
+        context.lineTo(x2, y2);
+        context.lineTo(x3, y3);
+        context.lineTo(0, 0);
+        context.closePath();
+        context.fillStrokeShape(shape);
+      }}
+      fill="black"
+      strokeEnabled={false}
       />
       <Line
-        points={[0, 0, 0, opening.height]}
-        stroke={opening.color}
-        strokeWidth={2}
+      points={[0, 0, 0, opening.height]}
+      stroke={opening.color}
+      strokeWidth={2}
       />
       <Line
-        points={[0, 0, opening.width, 0]}
-        stroke={opening.color}
-        strokeWidth={2}
+      points={[0, 0, opening.width, 0]}
+      stroke={opening.color}
+      strokeWidth={2}
       />
     </Group>
   );

@@ -1,12 +1,12 @@
 
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, SetStateAction, Dispatch } from "react";
 import { Stage, Layer, Rect, Line } from "react-konva";
 import MeasurementBar from "./MeasurementBar";
 import { Opening } from "../types";
 import { renderOpening } from "../utils.tsx";
 
-const CrossSectionView = ({ openings, zoom = 1 }: { openings: Opening[], zoom?: number }) => {
+const CrossSectionView = ({ openings, setOpenings, zoom = 1 }: { openings: Opening[], setOpenings: Dispatch<SetStateAction<Opening[]>>, zoom?: number }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<{ width: number; height: number }>({ width: 400, height: 200 });
 
@@ -54,6 +54,7 @@ const CrossSectionView = ({ openings, zoom = 1 }: { openings: Opening[], zoom?: 
     setStagePos({ x: newX, y: Math.min(newY, minY) });
   };
 
+
   return (
     <section className="flex-1 min-h-0 bg-zinc-800 rounded-t-lg shadow-inner flex flex-col items-center justify-center">
       <div className="w-full flex-1 flex flex-col">
@@ -74,7 +75,7 @@ const CrossSectionView = ({ openings, zoom = 1 }: { openings: Opening[], zoom?: 
             onWheel={handleWheel}
           >
             <Layer scaleY={-1}>
-              <Rect  x={0} y={-9999} width={999999} height={999999} fill="gray" />
+              <Rect  x={0} y={-9999} width={999999} height={999999} fill="gray"/>
               {openings.map((opening, idx) => renderOpening(opening, idx))}
               <Line
                 points={[0, 0, 999999, 0]}

@@ -14,7 +14,7 @@ const App = () => {
     height: 60,
     distanceFromLast: 0,
     x: 0,
-    y: 100,
+    y: 0,
     color: defaultOpeningColor
   }, {
     type: 'circle',
@@ -27,7 +27,7 @@ const App = () => {
   return (
     <div className="flex h-screen bg-zinc-950 dark">
       <Sidebar openings={openings} setOpenings={setOpenings} />
-      <MainPanel openings={openings} />
+      <MainPanel openings={openings} setOpenings={setOpenings} />
     </div>
   );
 };
