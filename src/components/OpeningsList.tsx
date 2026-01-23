@@ -1,5 +1,6 @@
 import { Opening } from "../types";
 import { Dispatch, SetStateAction, useState } from "react";
+import NumberInput from "./NumberInput";
 
 interface OpeningsListProps {
   openings: Opening[];
@@ -11,6 +12,21 @@ const OpeningsList = ({ openings, setOpenings }: OpeningsListProps) => {
 
   const toggleCollapse = (idx: number) => {
     setCollapsed(prev => prev.map((c, i) => (i === idx ? !c : c)));
+  };
+  const openingInputs = {
+    rectangle: [
+        { key: 'x', label: 'x:', min: 0 },
+        { key: 'y', label: 'y:' },
+        { key: 'width', label: 'width:', min: 1 },
+        { key: 'height', label: 'height:', min: 1 },
+        { key: 'distanceFromLast', label: 'distanceFromLast:' },
+    ],
+    circle: [
+        { key: 'x', label: 'x:', min: 0 },
+        { key: 'y', label: 'y:' },
+        { key: 'radius', label: 'radius:', min: 1 },
+        { key: 'distanceFromLast', label: 'distanceFromLast:' },
+    ],
   };
 
   return (
@@ -28,83 +44,18 @@ const OpeningsList = ({ openings, setOpenings }: OpeningsListProps) => {
           </button>
           {!collapsed[idx] && (
             <div className="mt-2 space-y-1">
-              <div className="flex items-center gap-2">
-                <label className="text-zinc-400 w-14">x:</label>
-                <input
-                  type="number"
-                  className="w-20 h-8 rounded-md border border-zinc-600 bg-zinc-800 px-2 py-1 text-base text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 shadow-sm"
-                  value={opening.x}
-                  onChange={e => {
-                    const newX = parseFloat(e.target.value);
-                    setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, x: isNaN(newX) ? 0 : Math.max(newX, 0) } : o));
-                  }}
+              {openingInputs[opening.type].map(input => (
+                <NumberInput
+                  key={input.key}
+                  label={input.label}
+                  value={opening[input.key as keyof typeof opening] as number}
+                  onChange={val => setOpenings(prev => prev.map((o, i) =>
+                    i === idx
+                      ? { ...o, [input.key]: isNaN(val) ? 0 : (input.min !== undefined ? Math.max(val, input.min) : val) }
+                      : o
+                  ))}
                 />
-              </div>
-              <div className="flex items-center gap-2">
-                <label className="text-zinc-400 w-14">y:</label>
-                <input
-                  type="number"
-                  className="w-20 h-8 rounded-md border border-zinc-600 bg-zinc-800 px-2 py-1 text-base text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 shadow-sm"
-                  value={opening.y}
-                  onChange={e => {
-                    const newY = parseFloat(e.target.value);
-                    setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, y: isNaN(newY) ? 0 : newY } : o));
-                  }}
-                />
-              </div>
-              {opening.type === 'rectangle' ? (
-                <>
-                  <div className="flex items-center gap-2">
-                    <label className="text-zinc-400 w-14">width:</label>
-                    <input
-                      type="number"
-                      className="w-20 h-8 rounded-md border border-zinc-600 bg-zinc-800 px-2 py-1 text-base text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 shadow-sm"
-                      value={opening.width}
-                      onChange={e => {
-                        const newWidth = parseFloat(e.target.value);
-                        setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, width: isNaN(newWidth) ? 0 : Math.max(newWidth, 1) } : o));
-                      }}
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <label className="text-zinc-400 w-14">height:</label>
-                    <input
-                      type="number"
-                      className="w-20 h-8 rounded-md border border-zinc-600 bg-zinc-800 px-2 py-1 text-base text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 shadow-sm"
-                      value={opening.height}
-                      onChange={e => {
-                        const newHeight = parseFloat(e.target.value);
-                        setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, height: isNaN(newHeight) ? 0 : Math.max(newHeight, 1) } : o));
-                      }}
-                    />
-                  </div>
-                </>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <label className="text-zinc-400 w-14">radius:</label>
-                  <input
-                    type="number"
-                    className="w-20 h-8 rounded-md border border-zinc-600 bg-zinc-800 px-2 py-1 text-base text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 shadow-sm"
-                    value={opening.radius}
-                    onChange={e => {
-                      const newRadius = parseFloat(e.target.value);
-                      setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, radius: isNaN(newRadius) ? 0 : Math.max(newRadius, 1) } : o));
-                    }}
-                  />
-                </div>
-              )}
-              <div className="flex items-center gap-2">
-                <label className="text-zinc-400 w-14">distanceFromLast:</label>
-                <input
-                  type="number"
-                  className="w-20 h-8 rounded-md border border-zinc-600 bg-zinc-800 px-2 py-1 text-base text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 shadow-sm"
-                  value={opening.distanceFromLast}
-                  onChange={e => {
-                    const newDist = parseFloat(e.target.value);
-                    setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, distanceFromLast: isNaN(newDist) ? 0 : newDist } : o));
-                  }}
-                />
-              </div>
+              ))}
             </div>
           )}
         </li>

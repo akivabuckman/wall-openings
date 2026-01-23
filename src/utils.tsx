@@ -1,17 +1,31 @@
 import { Circle, Group, Line, Rect, Shape } from "react-konva";
 import { Opening } from "./types";
+import { Dispatch, SetStateAction } from "react";
 
-export function renderOpening(opening: Opening, key?: string | number) {
+export function renderOpening(
+  opening: Opening,
+  setOpenings: Dispatch<SetStateAction<Opening[]>>,
+  idx: number,
+) {
   if (opening.type === 'rectangle') {
-    return renderRectangleOpening(opening, key);
+    return renderRectangleOpening(opening, setOpenings, idx);
   }
   if (opening.type === 'circle') {
-    return renderCircleOpening(opening, key);
+    return renderCircleOpening(opening, setOpenings, idx);
   }
   return null;
 }
 
-function renderRectangleOpening(opening: Extract<Opening, { type: 'rectangle' }>, key?: string | number) {
+function handleDragMove(e: { target: { position: () => { x: number; y: number } } }, setOpenings: Dispatch<SetStateAction<Opening[]>>, idx: number) {
+  const { x, y } = e.target.position();
+  setOpenings(prev => prev.map((o, i) => i === idx ? { ...o, x, y } : o));
+}
+
+function renderRectangleOpening(
+  opening: Extract<Opening, { type: 'rectangle' }> ,
+  setOpenings: Dispatch<SetStateAction<Opening[]>>,
+  idx: number,
+) {
   const angleRad = (20 * Math.PI) / 180;
   const percent = 0.8;
   const x1 = 0;
@@ -22,11 +36,13 @@ function renderRectangleOpening(opening: Extract<Opening, { type: 'rectangle' }>
   const y3 = 0;
   return (
     <Group
-      key={key}
+      key={idx}
       x={opening.x}
       y={opening.y}
       draggable
+      dragBoundFunc={pos => ({ ...pos, x: Math.max(0, Math.round(pos.x)) })}
       scaleY={-1}
+      onDragMove={(e) => handleDragMove(e, setOpenings, idx)}
     >
       <Rect
       width={opening.width}
@@ -62,7 +78,11 @@ function renderRectangleOpening(opening: Extract<Opening, { type: 'rectangle' }>
   );
 }
 
-function renderCircleOpening(opening: Extract<Opening, { type: 'circle' }>, key?: string | number) {
+function renderCircleOpening(
+  opening: Extract<Opening, { type: 'circle' }> ,
+  setOpenings: Dispatch<SetStateAction<Opening[]>>,
+  idx: number,
+) {
   const r = opening.radius;
   const diag1 = [
     -r * Math.SQRT1_2, -r * Math.SQRT1_2,
@@ -73,7 +93,14 @@ function renderCircleOpening(opening: Extract<Opening, { type: 'circle' }>, key?
     -r * Math.SQRT1_2, r * Math.SQRT1_2
   ];
   return (
-    <Group key={key} x={opening.x} y={opening.y} draggable>
+    <Group
+      key={idx}
+      x={opening.x}
+      y={opening.y}
+      draggable
+      dragBoundFunc={pos => ({ ...pos, x: Math.max(0, Math.round(pos.x)) })}
+      onDragMove={(e) => handleDragMove(e, setOpenings, idx)}
+    >
       <Circle
         x={0}
         y={0}

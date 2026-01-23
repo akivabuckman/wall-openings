@@ -4,6 +4,7 @@ interface OpeningBase {
   x: number;
   y: number;
   color: string;
+  id: number;
 }
 
 // Rectangle extends base

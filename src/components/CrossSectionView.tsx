@@ -1,6 +1,7 @@
 
 
 import { useRef, useEffect, useState, SetStateAction, Dispatch } from "react";
+import type { KonvaEventObject } from 'konva/lib/Node';
 import { Stage, Layer, Rect, Line } from "react-konva";
 import MeasurementBar from "./MeasurementBar";
 import { Opening } from "../types";
@@ -32,10 +33,11 @@ const CrossSectionView = ({ openings, setOpenings, zoom = 1 }: { openings: Openi
   }, [zoom]);
 
 
-  const handleWheel = (e: any) => {
+  const handleWheel = (e: KonvaEventObject<WheelEvent>) => {
     if (!containerRef.current) return;
     e.evt.preventDefault();
-    const stage = e.target.getStage();
+    const stage = typeof e.target.getStage === 'function' ? e.target.getStage() : null;
+    if (!stage) return;
     const oldScale = localZoom;
     const pointer = stage.getPointerPosition();
     if (!pointer) return;
@@ -76,7 +78,7 @@ const CrossSectionView = ({ openings, setOpenings, zoom = 1 }: { openings: Openi
           >
             <Layer scaleY={-1}>
               <Rect  x={0} y={-9999} width={999999} height={999999} fill="gray"/>
-              {openings.map((opening, idx) => renderOpening(opening, idx))}
+              {openings.map((opening, idx) => renderOpening(opening, setOpenings, idx))}
               <Line
                 points={[0, 0, 999999, 0]}
                 stroke="black"
