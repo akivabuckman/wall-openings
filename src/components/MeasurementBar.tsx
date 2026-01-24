@@ -1,68 +1,63 @@
 import { useEffect, useRef, useState } from "react";
 import { Layer, Rect, Stage } from "react-konva";
-import { renderMeasurement } from "../utils/renderUtils";
 import { Opening } from "../types";
+import Measurement from "./Measurement";
+
 
 const MeasurementBar = ({ localZoom, openingIndexes, openings }: { localZoom: number, openingIndexes: { openingId: number, fromPrevious: number }[], openings: Opening[] }) => {
-  const [size, setSize] = useState<{ width: number; height: number }>({ width: 400, height: 200 });
-  const containerRef = useRef<HTMLDivElement>(null);
-  
+  const [containerSize, setContainerSize] = useState<{ width: number; height: number }>({ width: 400, height: 60 });
+  const containerDivRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    function updateSize() {
-      if (containerRef.current) {
-        setSize({
-          width: containerRef.current.offsetWidth,
-          height: containerRef.current.offsetHeight,
+    function updateContainerSize() {
+      if (containerDivRef.current) {
+        console.log(9999)
+        setContainerSize({
+          width: containerDivRef.current.offsetWidth,
+          height: containerDivRef.current.offsetHeight,
         });
       }
     }
-    updateSize();
-    window.addEventListener("resize", updateSize);
-    return () => window.removeEventListener("resize", updateSize);
+    updateContainerSize();
+    window.addEventListener("resize", updateContainerSize);
+    return () => window.removeEventListener("resize", updateContainerSize);
   }, []);
-  
 
   return (
-    <div ref={containerRef} className="w-full border-4 border-white border-solid flex items-center justify-center rounded-b-lg">
-      {/* Measurements will go here */}
+    <div ref={containerDivRef} className="w-full border flex items-center justify-center rounded-b-lg">
       <Stage
-                  width={size.width}
-                  height={size.height}
-                  className="rounded shadow"
-                  scaleX={localZoom}
-                  scaleY={localZoom}
-                  // x={Math.min(0, stagePos.x)}
-                  // y={stagePos.y}
-                  draggable
-                  dragBoundFunc={(pos) => ({
-                    x: Math.min(0, pos.x),
-                    y: pos.y
-                  })}
-                >
-                  <Layer>
-                    <Rect  x={0} y={-9999} width={999999} height={999999} fill="red"/>
-                    {/* Render measurements for each opening index */}
-                    {openingIndexes.map((oi, idx) => {
-                      console.log(oi)
-                      if (idx === 0 || oi.fromPrevious === 0) return null;
-                      // Find the current and previous opening x positions
-                      const sorted = openings
-                        .map((o, i) => ({ openingId: o.id ?? i, x: o.x }))
-                        .sort((a, b) => {
-                          if (a.x !== b.x) return a.x - b.x;
-                          return a.openingId - b.openingId;
-                        });
-                      const prev = sorted[idx - 1];
-                      const curr = sorted[idx];
-                      if (!prev || !curr) return null;
-                      return renderMeasurement({
-                        x: curr.x - prev.x,
-                        y: size.height / 2,
-                        label: (curr.x - prev.x).toString(),
-                      });
-                    })}
-                  </Layer>
-                  </Stage>
+        width={containerSize.width}
+        height={containerSize.height}
+        className="rounded shadow"
+        scaleX={localZoom}
+        scaleY={localZoom}
+      >
+        <Layer>
+          <Rect x={0} y={0} width={999999} height={containerSize.height} fill="grey" />
+          {/* Render measurements for each opening index */}
+          {openingIndexes.map((openingIndex, openingIndexArrayIndex) => {
+            if (openingIndexArrayIndex === 0 || openingIndex.fromPrevious === 0) return null;
+            // Find the current and previous opening x positions
+            const sortedOpenings = openings
+              .map((opening, openingArrayIndex) => ({ openingId: opening.id ?? openingArrayIndex, x: opening.x }))
+              .sort((openingA, openingB) => {
+                if (openingA.x !== openingB.x) return openingA.x - openingB.x;
+                return openingA.openingId - openingB.openingId;
+              });
+              const previousOpening = sortedOpenings[openingIndexArrayIndex - 1];
+              const currentOpening = sortedOpenings[openingIndexArrayIndex];
+            if (!previousOpening || !currentOpening) return null;
+            return (
+              <Measurement
+                key={currentOpening.openingId}
+                startX={previousOpening.x}
+                endX={currentOpening.x}
+                y={containerSize.height / 2}
+              />
+            );
+          })}
+        </Layer>
+      </Stage>
     </div>
   );
 };

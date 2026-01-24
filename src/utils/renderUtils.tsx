@@ -47,7 +47,7 @@ function renderRectangleOpening(
       x={opening.x}
       y={opening.y + opening.height}
       draggable
-      dragBoundFunc={pos => ({ ...pos, x: Math.max(0, Math.round(pos.x)) })}
+      dragBoundFunc={pos => ({ ...pos, x: Math.max(0, Math.round(pos.x)), y: Math.max(0, Math.round(pos.y)) })}
       scaleY={-1}
       onDragMove={(e) => handleDragMove(e, setOpenings, idx)}
     >
@@ -105,7 +105,7 @@ function renderCircleOpening(
       x={opening.x}
       y={opening.y}
       draggable
-      dragBoundFunc={pos => ({ ...pos, x: Math.max(0, Math.round(pos.x)) })}
+      dragBoundFunc={pos => ({ ...pos, x: Math.max(0, Math.round(pos.x)), y: Math.max(0, Math.round(pos.y)) })}
       onDragMove={(e) => handleDragMove(e, setOpenings, idx)}
     >
       <Circle
@@ -132,55 +132,4 @@ function renderCircleOpening(
   );
 }
 
-export function renderMeasurement({ x, y = 0, label }: { x: number; y?: number; label?: string }) {
-  const tickLength = 16;
-  const tickAngle = 45 * (Math.PI / 180); // 45 degrees in radians
-  // Calculate tick offsets
-  const dx = tickLength * Math.cos(tickAngle);
-  const dy = tickLength * Math.sin(tickAngle);
-
-  // Main horizontal line
-  const mainLine = (
-    <Line
-      points={[0, y, x, y]}
-      stroke="#222"
-      strokeWidth={2}
-      key="main"
-    />
-  );
-
-  // Left 45° tick
-  const leftTick = (
-    <Line
-      points={[0, y, dx, y - dy]}
-      stroke="#222"
-      strokeWidth={2}
-      key="leftTick"
-    />
-  );
-
-  // Right 45° tick
-  const rightTick = (
-    <Line
-      points={[x, y, x - dx, y - dy]}
-      stroke="#222"
-      strokeWidth={2}
-      key="rightTick"
-    />
-  );
-
-  // Label (centered above the line, no background shape)
-  const labelNode = (
-    <Text
-      x={x / 2}
-      y={y - 32}
-      text={label ?? x.toString()}
-      fontSize={18}
-      fill="#222"
-      align="center"
-      key="label"
-    />
-  );
-
-  return [mainLine, leftTick, rightTick, labelNode];
-}
+// Measurement rendering moved to Measurement and Tick components.
