@@ -1,4 +1,5 @@
 import { Circle, Group, Line, Rect, Shape } from "react-konva";
+import Measurement from "../components/Measurement";
 import { Opening } from "../types";
 import { Dispatch, SetStateAction } from "react";
 
@@ -9,10 +10,8 @@ function recalcXIndex(openings: Opening[]): Opening[] {
 }
 
 
-// No longer used: fromPrevious is always derived from x and previous x
-
 function updateX(openings: Opening[], openingId: number, value: number, min?: number): Opening[] {
-  let updated = openings.map(o =>
+  const updated = openings.map(o =>
     o.id === openingId ? { ...o, x: isNaN(value) ? 0 : (min !== undefined ? Math.max(value, min) : value) } : o
   );
   // After x change, recalc fromPrevious for all based on x order
@@ -35,8 +34,6 @@ export function updateOpeningField(
     const target = openings.find(o => o.id === openingId);
     if (!target) return openings;
     const prev = openings.find(o => o.xIndex === (target.xIndex) - 1);
-    console.log(openings)
-    console.log(prev)
     if (!prev) return openings;
     const prevX = prev.x;
     if (value < 0) return openings;
@@ -47,7 +44,7 @@ export function updateOpeningField(
     return updateX(openings, openingId, value, min);
   }
   // Other fields: just update the field
-  let updated = openings.map(o =>
+  const updated = openings.map(o =>
     o.id === openingId ? { ...o, [key]: isNaN(value) ? 0 : (min !== undefined ? Math.max(value, min) : value) } : o
   );
   return recalcXIndex(updated);
@@ -148,6 +145,8 @@ function renderRectangleOpening(
       stroke={opening.color}
       strokeWidth={2}
       />
+      {/* Measurement across the width of the rectangle, always centered on the shape */}
+      <Measurement startX={0} endX={opening.width} y={opening.height / 2} />
     </Group>
   );
 }
@@ -171,6 +170,7 @@ function renderCircleOpening(
       key={idx}
       x={opening.x}
       y={opening.y}
+      scaleY={-1}
       draggable
       dragBoundFunc={pos => ({ ...pos, x: Math.max(0, Math.round(pos.x)), y: Math.max(0, Math.round(pos.y)) })}
       onDragMove={(e) => handleDragMove(e, setOpenings, idx)}
@@ -195,8 +195,9 @@ function renderCircleOpening(
         strokeWidth={2}
         dash={[8, 6]}
       />
+      {/* Measurement across the diameter of the circle, always centered on the shape */}
+      <Measurement startX={-opening.radius} endX={opening.radius} y={0} />
+      
     </Group>
   );
 }
-
-// Measurement rendering moved to Measurement and Tick components.

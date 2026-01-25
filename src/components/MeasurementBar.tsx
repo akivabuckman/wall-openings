@@ -8,6 +8,12 @@ const MeasurementBar = ({ localZoom, openings }: { localZoom: number, openings: 
   const [containerSize, setContainerSize] = useState<{ width: number; height: number }>({ width: 400, height: 60 });
   const containerDivRef = useRef<HTMLDivElement>(null);
 
+  const xNodes: number[] = openings.flatMap(opening => [
+    opening.type === 'rectangle' ? opening.x : opening.x - opening.radius,
+    opening.x + (opening.type === 'rectangle' ? opening.width : opening.radius)
+  ]).sort((a, b) => a - b);
+
+  console.log(xNodes.flat());
   useEffect(() => {
     function updateContainerSize() {
       if (containerDivRef.current) {
@@ -23,7 +29,7 @@ const MeasurementBar = ({ localZoom, openings }: { localZoom: number, openings: 
   }, []);
 
   return (
-    <div ref={containerDivRef} className="w-full border flex items-center justify-center rounded-b-lg">
+    <div ref={containerDivRef} className="w-full border flex flex-col items-center justify-center rounded-b-lg">
       <Stage
         width={containerSize.width}
         height={containerSize.height}
@@ -44,7 +50,22 @@ const MeasurementBar = ({ localZoom, openings }: { localZoom: number, openings: 
                   key={opening.id}
                   startX={prev.x}
                   endX={opening.x}
-                  y={containerSize.height / 2}
+                  y={containerSize.height / 2 - 10}
+                />
+              );
+            })}
+          {/* Render measurements for xNodes below the existing bar */}
+          {xNodes
+            .slice()
+            .sort((a, b) => a - b)
+            .map((x, i, arr) => {
+              if (i === 0) return null;
+              return (
+                <Measurement
+                  key={"xnode-" + i}
+                  startX={arr[i - 1]}
+                  endX={x}
+                  y={containerSize.height / 2 + 18}
                 />
               );
             })}

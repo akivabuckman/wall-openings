@@ -2,9 +2,8 @@ import "./App.css";
 import Sidebar from './components/Sidebar';
 import MainPanel from './components/MainPanel';
 import { Opening } from './types';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { defaultOpeningColor } from './constants';
-import { sortAndFromPrevious } from "./utils/utils";
 
 
 

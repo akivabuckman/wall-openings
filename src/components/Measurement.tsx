@@ -10,6 +10,7 @@ interface MeasurementProps {
 const Measurement = ({ startX, endX, y }: MeasurementProps) => {
   const length = endX - startX;
   const midX = startX + length / 2;
+  console.log(startX, endX, y)
   return [
     <Line
       key="main"
