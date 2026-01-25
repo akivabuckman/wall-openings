@@ -1,5 +1,4 @@
 import { Opening } from "../types";
-import { updateOpeningField } from "../utils/renderUtils";
 import { Dispatch, SetStateAction, useState } from "react";
 import OpeningItem from "./OpeningItem";
 import { Plus } from "lucide-react";
