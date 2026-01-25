@@ -1,11 +1,20 @@
-import React from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Opening } from "../types";
+import OpeningsList from "./OpeningsList";
 
-const Sidebar = ({ openings }: { openings: Opening[] }) => (
-  <aside className="w-56 h-full bg-zinc-900 border-r border-zinc-800 flex flex-col items-center py-6">
-    <h2 className="text-zinc-100 text-lg font-semibold mb-6">Controls</h2>
-    {/* Add control buttons here */}
-  </aside>
-);
+const Sidebar = ({ openings, setOpenings }: { 
+  openings: Opening[],
+  setOpenings: Dispatch<SetStateAction<Opening[]>>,
+}) => {
+
+  return (
+    <aside
+      className="w-100 h-full bg-zinc-900 border-r border-zinc-800 flex flex-col items-center py-6 relative select-none"
+    >
+      <OpeningsList openings={openings} setOpenings={setOpenings} />
+    </aside>
+  );
+};
+
 
 export default Sidebar;
