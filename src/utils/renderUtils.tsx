@@ -16,7 +16,7 @@ function updateX(openings: Opening[], openingId: number, value: number, min?: nu
     o.id === openingId ? { ...o, x: isNaN(value) ? 0 : (min !== undefined ? Math.max(value, min) : value) } : o
   );
   // After x change, recalc fromPrevious for all based on x order
-  const sorted = [...updated].sort((a, b) => a.x - b.x || a.id - b.id);
+  const sorted = [...updated].sort((a, b) => a.x - b.x || a.xIndex - b.xIndex);
   sorted.forEach((o, i) => {
     o.xIndex = i;
     o.fromPrevious = i === 0 ? 0 : o.x - sorted[i - 1].x;
@@ -34,14 +34,13 @@ export function updateOpeningField(
     // When fromPrevious is changed, update x instead, but do not allow < 0
     const target = openings.find(o => o.id === openingId);
     if (!target) return openings;
-    const prev = openings.find(o => o.xIndex === (target.xIndex ?? 0) - 1);
+    const prev = openings.find(o => o.xIndex === (target.xIndex) - 1);
+    console.log(openings)
+    console.log(prev)
     if (!prev) return openings;
     const prevX = prev.x;
-    console.log(prevX, value)
-    console.log(openings)
     if (value < 0) return openings;
     const newX = prevX + value;
-    console.log(prevX, value, newX)
     return updateX(openings, openingId, newX);
   }
   if (key === 'x') {
