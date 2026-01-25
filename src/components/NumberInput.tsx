@@ -9,8 +9,8 @@ interface NumberInputProps {
 }
 
 const NumberInput: React.FC<NumberInputProps> = ({ label, value, onChange, id, className }) => (
-  <div className="flex items-center gap-2">
-    <label htmlFor={id} className="text-zinc-400 w-14">{label}</label>
+  <div className="flex items-center gap-2 px-8">
+    <label htmlFor={id} className="text-left text-zinc-400 w-36">{label}</label>
     <input
       id={id}
       type="number"

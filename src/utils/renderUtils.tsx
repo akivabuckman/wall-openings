@@ -1,7 +1,58 @@
-import { Label, Tag, Text } from "react-konva";
 import { Circle, Group, Line, Rect, Shape } from "react-konva";
 import { Opening } from "../types";
 import { Dispatch, SetStateAction } from "react";
+
+function recalcXIndex(openings: Opening[]): Opening[] {
+  const sorted = [...openings].sort((a, b) => a.x - b.x || a.id - b.id);
+  sorted.forEach((o, i) => { o.xIndex = i; });
+  return openings.map(o => sorted.find(u => u.id === o.id)!);
+}
+
+
+// No longer used: fromPrevious is always derived from x and previous x
+
+function updateX(openings: Opening[], openingId: number, value: number, min?: number): Opening[] {
+  let updated = openings.map(o =>
+    o.id === openingId ? { ...o, x: isNaN(value) ? 0 : (min !== undefined ? Math.max(value, min) : value) } : o
+  );
+  // After x change, recalc fromPrevious for all based on x order
+  const sorted = [...updated].sort((a, b) => a.x - b.x || a.id - b.id);
+  sorted.forEach((o, i) => {
+    o.xIndex = i;
+    o.fromPrevious = i === 0 ? 0 : o.x - sorted[i - 1].x;
+  });
+  return updated.map(o => sorted.find(u => u.id === o.id)!);
+}
+export function updateOpeningField(
+  openings: Opening[],
+  openingId: number,
+  key: keyof Opening,
+  value: number,
+  min?: number,
+): Opening[] {
+  if (key === 'fromPrevious') {
+    // When fromPrevious is changed, update x instead, but do not allow < 0
+    const target = openings.find(o => o.id === openingId);
+    if (!target) return openings;
+    const prev = openings.find(o => o.xIndex === (target.xIndex ?? 0) - 1);
+    if (!prev) return openings;
+    const prevX = prev.x;
+    console.log(prevX, value)
+    console.log(openings)
+    if (value < 0) return openings;
+    const newX = prevX + value;
+    console.log(prevX, value, newX)
+    return updateX(openings, openingId, newX);
+  }
+  if (key === 'x') {
+    return updateX(openings, openingId, value, min);
+  }
+  // Other fields: just update the field
+  let updated = openings.map(o =>
+    o.id === openingId ? { ...o, [key]: isNaN(value) ? 0 : (min !== undefined ? Math.max(value, min) : value) } : o
+  );
+  return recalcXIndex(updated);
+}
 
 export function renderOpening(
   opening: Opening,
@@ -19,13 +70,30 @@ export function renderOpening(
 
 function handleDragMove(e: { target: { position: () => { x: number; y: number } } }, setOpenings: Dispatch<SetStateAction<Opening[]>>, idx: number) {
   const { x, y } = e.target.position();
-  setOpenings(prev => prev.map((o, i) => {
-    if (i !== idx) return o;
-    if (o.type === 'rectangle') {
-      return { ...o, x, y: y - o.height };
-    }
-    return { ...o, x, y };
-  }));
+  setOpenings(prev => {
+    // Find the id of the dragged opening
+    const draggedId = prev[idx].id;
+    // Update only the dragged opening's x/y
+    const updated = prev.map((o) => {
+      if (o.id !== draggedId) return o;
+      if (o.type === 'rectangle') {
+        return { ...o, x, y: y - o.height };
+      }
+      return { ...o, x, y };
+    });
+    // Sort for fromPrevious/index calculation
+    const sorted = [...updated].sort((a, b) => {
+      if (a.x !== b.x) return a.x - b.x;
+      return a.id - b.id;
+    });
+    // Update fromPrevious and index for all
+    const withFromPrev = sorted.map((o, i) => {
+      const fromPrevious = i === 0 ? 0 : o.x - sorted[i - 1].x;
+      return { ...o, fromPrevious, xIndex: i };
+    });
+    // Restore original order by id
+    return prev.map(o => withFromPrev.find(u => u.id === o.id)!);
+  });
 }
 
 function renderRectangleOpening(

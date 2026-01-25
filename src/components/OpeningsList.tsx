@@ -1,31 +1,32 @@
 import { Opening } from "../types";
+import { updateOpeningField } from "../utils/renderUtils";
 import { Dispatch, SetStateAction, useState } from "react";
 import NumberInput from "./NumberInput";
 
 interface OpeningsListProps {
   openings: Opening[];
   setOpenings: Dispatch<SetStateAction<Opening[]>>;
-  openingIndexes: { openingId: number, fromPrevious: number }[];
-  setOpeningIndexes: Dispatch<SetStateAction<{ openingId: number, fromPrevious: number }[]>>;
 }
 
-const OpeningsList = ({ openings, setOpenings, openingIndexes, setOpeningIndexes }: OpeningsListProps) => {
-  const [collapsed, setCollapsed] = useState(() => openings.map(() => true));
+const OpeningsList = ({ openings, setOpenings }: OpeningsListProps) => {
+  const [collapsed, setCollapsed] = useState<boolean[]>(() => openings.map(() => false));
 
   const toggleCollapse = (idx: number) => {
     setCollapsed(prev => prev.map((c, i) => (i === idx ? !c : c)));
   };
   const openingInputs = {
     rectangle: [
-        { key: 'x', label: 'x:', min: 0 },
-        { key: 'y', label: 'y:' },
-        { key: 'width', label: 'width:', min: 1 },
-        { key: 'height', label: 'height:', min: 1 },
+        { key: 'x', label: 'X:', min: 0 },
+        { key: 'y', label: 'Y:' },
+        { key: 'width', label: 'Width:', min: 1 },
+        { key: 'height', label: 'Height:', min: 1 },
+        { key: 'fromPrevious', label: 'From Previous:' },
     ],
     circle: [
-        { key: 'x', label: 'x:', min: 0 },
-        { key: 'y', label: 'y:' },
-        { key: 'radius', label: 'radius:', min: 1 },
+        { key: 'x', label: 'X:', min: 0 },
+        { key: 'y', label: 'Y:' },
+        { key: 'radius', label: 'Radius:', min: 1 },
+        { key: 'fromPrevious', label: 'From Previous:' },
     ],
   };
 
@@ -33,7 +34,6 @@ const OpeningsList = ({ openings, setOpenings, openingIndexes, setOpeningIndexes
     <>
       <ul className="space-y-2">
         {openings.map((opening, openingIdx) => {
-          const openingIndex = openingIndexes.find(indexObj => indexObj.openingId === opening.id);
           return (
             <li key={openingIdx} className="bg-zinc-800 rounded px-3 py-2 text-zinc-200 text-xs flex flex-col gap-1">
               <button
@@ -48,29 +48,21 @@ const OpeningsList = ({ openings, setOpenings, openingIndexes, setOpeningIndexes
               {!collapsed[openingIdx] && (
                 <div className="mt-2 space-y-1">
                   {openingInputs[opening.type].map(input => (
-                    <NumberInput
-                      key={input.key}
-                      label={input.label}
-                      value={opening[input.key as keyof typeof opening] as number}
-                      onChange={val => setOpenings(prevOpenings => prevOpenings.map((openingObj, i) =>
-                        i === openingIdx
-                          ? { ...openingObj, [input.key]: isNaN(val) ? 0 : (input.min !== undefined ? Math.max(val, input.min) : val) }
-                          : openingObj
-                      ))}
-                    />
+                  <NumberInput
+                    key={input.key}
+                    label={input.label}
+                    value={opening[input.key as keyof typeof opening] as number}
+                    onChange={val => setOpenings(prevOpenings =>
+                      updateOpeningField(
+                        prevOpenings,
+                        prevOpenings[openingIdx].id,
+                        input.key as keyof Opening,
+                        val,
+                        input.min
+                      )
+                    )}
+                  />
                   ))}
-                  {openingIndex && (
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-zinc-400">fromPrevious:</span>
-                      <NumberInput
-                        label=""
-                        value={openingIndex.fromPrevious}
-                        onChange={val => setOpeningIndexes(prevIndexes => prevIndexes.map((indexObj) =>
-                          indexObj.openingId === openingIndex.openingId ? { ...indexObj, fromPrevious: isNaN(val) ? 0 : val } : indexObj
-                        ))}
-                      />
-                    </div>
-                  )}
                 </div>
               )}
             </li>

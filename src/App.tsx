@@ -13,37 +13,37 @@ const App = () => {
     type: 'rectangle',
     width: 100,
     height: 60,
-    x: 0,
-    y: 0,
+    x: 115,
+    y: 100,
     color: defaultOpeningColor,
-    id: 0
+    id: 0,
+    fromPrevious: 5,
+    xIndex: 0
   }, {
     type: 'circle',
     radius: 80,
-    x: 0,
+    x: 110,
     y: 0,
     color: defaultOpeningColor,
-    id: 1
+    id: 1,
+    fromPrevious: 0,
+    xIndex: 0
   },{
     type: 'rectangle',
     width: 100,
     height: 60,
-    x: 0,
+    x: 1110,
     y: 0,
     color: defaultOpeningColor,
-    id: 2
+    id: 2,
+    fromPrevious: 0,
+    xIndex: 0
   }]);
-  const [openingIndexes, setOpeningIndexes] = useState<{ openingId: number, fromPrevious: number }[]>([]);
-
-  useEffect(() => {
-    const sorted =sortAndFromPrevious(openings);
-    setOpeningIndexes(sorted);
-  }, [openings]);
 
   return (
     <div className="flex h-screen bg-zinc-950 dark">
-      <Sidebar openings={openings} setOpenings={setOpenings} openingIndexes={openingIndexes} setOpeningIndexes={setOpeningIndexes} />
-      <MainPanel openings={openings} setOpenings={setOpenings} openingIndexes={openingIndexes} />
+      <Sidebar openings={openings} setOpenings={setOpenings}  />
+      <MainPanel openings={openings} setOpenings={setOpenings}  />
     </div>
   );
 };

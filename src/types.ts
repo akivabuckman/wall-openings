@@ -3,6 +3,8 @@ interface OpeningBase {
   y: number;
   color: string;
   id: number;
+  fromPrevious: number;
+  xIndex: number;
 }
 
 export interface RectangleOpening extends OpeningBase {

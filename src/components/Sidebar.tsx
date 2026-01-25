@@ -2,11 +2,9 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Opening } from "../types";
 import OpeningsList from "./OpeningsList";
 
-const Sidebar = ({ openings, setOpenings, openingIndexes, setOpeningIndexes }: { 
+const Sidebar = ({ openings, setOpenings }: { 
   openings: Opening[],
   setOpenings: Dispatch<SetStateAction<Opening[]>>,
-  openingIndexes: { openingId: number, fromPrevious: number }[],
-  setOpeningIndexes: Dispatch<SetStateAction<{ openingId: number, fromPrevious: number }[]>>
 }) => {
 
   return (
@@ -19,7 +17,7 @@ const Sidebar = ({ openings, setOpenings, openingIndexes, setOpeningIndexes }: {
       <h2 className="text-zinc-100 text-lg font-semibold mb-6">Controls</h2>
       <div className="w-full px-2">
         <h3 className="text-zinc-400 text-sm font-medium mb-2">Openings List</h3>
-        <OpeningsList openings={openings} setOpenings={setOpenings} openingIndexes={openingIndexes} setOpeningIndexes={setOpeningIndexes} />
+        <OpeningsList openings={openings} setOpenings={setOpenings} />
       </div>
     </aside>
   );

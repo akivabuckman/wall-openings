@@ -7,7 +7,7 @@ import MeasurementBar from "./MeasurementBar";
 import { Opening } from "../types";
 import { renderOpening } from "../utils/renderUtils.tsx";
 
-const CrossSectionView = ({ openings, setOpenings, zoom = 1, openingIndexes }: { openings: Opening[], setOpenings: Dispatch<SetStateAction<Opening[]>>, zoom?: number, openingIndexes: { openingId: number, fromPrevious: number }[] }) => {
+const CrossSectionView = ({ openings, setOpenings, zoom = 1 }: { openings: Opening[], setOpenings: Dispatch<SetStateAction<Opening[]>>, zoom?: number }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<{ width: number; height: number }>({ width: 400, height: 200 });
 
@@ -34,26 +34,26 @@ const CrossSectionView = ({ openings, setOpenings, zoom = 1, openingIndexes }: {
 
 
   const handleWheel = (e: KonvaEventObject<WheelEvent>) => {
-    if (!containerRef.current) return;
-    e.evt.preventDefault();
-    const stage = typeof e.target.getStage === 'function' ? e.target.getStage() : null;
-    if (!stage) return;
-    const oldScale = localZoom;
-    const pointer = stage.getPointerPosition();
-    if (!pointer) return;
-    const mouseX = pointer.x;
-    const mouseY = pointer.y;
-    const direction = e.evt.deltaY > 0 ? -1 : 1;
-    const scaleBy = 1.1;
-    const newZoom = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
-    const clampedZoom = Math.max(0.1, Math.min(10, newZoom));
-    const worldX = (mouseX - stagePos.x) / oldScale;
-    const worldY = (mouseY - stagePos.y) / oldScale;
-    const newX = mouseX - worldX * clampedZoom;
-    const newY = mouseY - worldY * clampedZoom;
-    const minY = size.height - worldY * clampedZoom;
-    setLocalZoom(clampedZoom);
-    setStagePos({ x: newX, y: Math.min(newY, minY) });
+    // if (!containerRef.current) return;
+    // e.evt.preventDefault();
+    // const stage = typeof e.target.getStage === 'function' ? e.target.getStage() : null;
+    // if (!stage) return;
+    // const oldScale = localZoom;
+    // const pointer = stage.getPointerPosition();
+    // if (!pointer) return;
+    // const mouseX = pointer.x;
+    // const mouseY = pointer.y;
+    // const direction = e.evt.deltaY > 0 ? -1 : 1;
+    // const scaleBy = 1.1;
+    // const newZoom = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    // const clampedZoom = Math.max(0.1, Math.min(10, newZoom));
+    // const worldX = (mouseX - stagePos.x) / oldScale;
+    // const worldY = (mouseY - stagePos.y) / oldScale;
+    // const newX = mouseX - worldX * clampedZoom;
+    // const newY = mouseY - worldY * clampedZoom;
+    // const minY = size.height - worldY * clampedZoom;
+    // setLocalZoom(clampedZoom);
+    // setStagePos({ x: newX, y: Math.min(newY, minY) });
   };
 
 
@@ -87,7 +87,7 @@ const CrossSectionView = ({ openings, setOpenings, zoom = 1, openingIndexes }: {
             </Layer>
           </Stage>
         </div>
-        <MeasurementBar localZoom={localZoom} openingIndexes={openingIndexes} openings={openings}/>
+        <MeasurementBar localZoom={localZoom} openings={openings}/>
       </div>
     </section>
   );
