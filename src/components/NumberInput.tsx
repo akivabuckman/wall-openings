@@ -20,6 +20,7 @@ const NumberInput: React.FC<NumberInputProps> = ({ label, value, onChange, id, c
       }
       value={value}
       onChange={e => onChange(parseFloat(e.target.value))}
+      disabled={label === 'From Previous:' && value === 0}
     />
   </div>
 );

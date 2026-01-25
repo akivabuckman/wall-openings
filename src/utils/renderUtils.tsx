@@ -3,6 +3,77 @@ import Measurement from "../components/Measurement";
 import { Opening } from "../types";
 import { Dispatch, SetStateAction } from "react";
 
+// Render measurements for each opening index (between openings)
+export function renderOpeningMeasurements(openings: Opening[], containerHeight: number) {
+  return [...openings]
+    .sort((a, b) => a.x - b.x || a.id - b.id)
+    .map((opening, i, arr) => {
+      if (i === 0 || opening.fromPrevious === 0) return null;
+      const prev = arr[i - 1];
+      return (
+        <Measurement
+          key={opening.id}
+          startX={prev.x}
+          endX={opening.x}
+          y={containerHeight / 2 - 10}
+        />
+      );
+    });
+}
+
+// Render measurements for xNodes below the existing bar
+export function renderXNodeMeasurements(xNodes: number[], containerHeight: number) {
+  return xNodes
+    .slice()
+    .sort((a, b) => a - b)
+    .map((x, i, arr) => {
+      if (i === 0) return null;
+      return (
+        <Measurement
+          key={"xnode-" + i}
+          startX={arr[i - 1]}
+          endX={x}
+          y={containerHeight / 2 + 18}
+        />
+      );
+    });
+}
+// Render a rectangle or circle for AerialView (transparent overlay)
+export function renderAerialOpening(opening: Opening, zoom: number, y: number = 50) {
+  if (opening.type === 'rectangle') {
+    return (
+      <Rect
+        key={opening.id}
+        x={opening.x * zoom}
+        y={y}
+        width={opening.width * zoom}
+        height={30}
+        stroke={opening.color ?? '#888'}
+        strokeWidth={2}
+        fill="rgba(0,0,0,0.08)"
+        dash={[6, 4]}
+        listening={false}
+      />
+    );
+  } else if (opening.type === 'circle') {
+    return (
+      <Rect
+        key={opening.id}
+        x={(opening.x - opening.radius) * zoom}
+        y={y}
+        width={opening.radius * 2 * zoom}
+        height={30}
+        stroke={opening.color ?? '#888'}
+        strokeWidth={2}
+        fill="rgba(0,0,0,0.08)"
+        dash={[6, 4]}
+        listening={false}
+      />
+    );
+  }
+  return null;
+}
+
 function recalcXIndex(openings: Opening[]): Opening[] {
   const sorted = [...openings].sort((a, b) => a.x - b.x || a.id - b.id);
   sorted.forEach((o, i) => { o.xIndex = i; });

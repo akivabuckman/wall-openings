@@ -1,7 +1,9 @@
 import { Opening } from "../types";
 import { updateOpeningField } from "../utils/renderUtils";
 import { Dispatch, SetStateAction, useState } from "react";
-import NumberInput from "./NumberInput";
+import OpeningItem from "./OpeningItem";
+import { Plus } from "lucide-react";
+import { defaultOpeningColor } from "../constants";
 
 interface OpeningsListProps {
   openings: Opening[];
@@ -14,60 +16,51 @@ const OpeningsList = ({ openings, setOpenings }: OpeningsListProps) => {
   const toggleCollapse = (idx: number) => {
     setCollapsed(prev => prev.map((c, i) => (i === idx ? !c : c)));
   };
-  const openingInputs = {
-    rectangle: [
-        { key: 'x', label: 'X:', min: 0 },
-        { key: 'y', label: 'Y:' },
-        { key: 'width', label: 'Width:', min: 1 },
-        { key: 'height', label: 'Height:', min: 1 },
-        { key: 'fromPrevious', label: 'From Previous:' },
-    ],
-    circle: [
-        { key: 'x', label: 'X:', min: 0 },
-        { key: 'y', label: 'Y:' },
-        { key: 'radius', label: 'Radius:', min: 1 },
-        { key: 'fromPrevious', label: 'From Previous:' },
-    ],
+
+  const handleAddOpening = () => {
+    setOpenings(prev => [
+      ...prev,
+      {
+        id: prev.length > 0 ? Math.max(...prev.map(o => o.id)) + 1 : 1,
+        type: 'rectangle',
+        x: 0,
+        y: 0,
+        width: 50,
+        height: 30,
+        color: defaultOpeningColor,
+        fromPrevious: 0,
+        xIndex: prev.length,
+      }
+    ]);
+    setCollapsed(prev => [...prev, false]);
   };
 
   return (
     <>
+      <div className="flex items-center mb-3">
+        <button
+          className="flex items-center gap-2 px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow transition"
+          onClick={handleAddOpening}
+        >
+          <Plus className="w-4 h-4" />
+          Add Opening
+        </button>
+      </div>
       <ul className="space-y-2">
-        {openings.map((opening, openingIdx) => {
-          return (
-            <li key={openingIdx} className="bg-zinc-800 rounded px-3 py-2 text-zinc-200 text-xs flex flex-col gap-1">
-              <button
-                className="flex items-center gap-2 w-full text-left focus:outline-none"
-                onClick={() => toggleCollapse(openingIdx)}
-                aria-expanded={!collapsed[openingIdx]}
-              >
-                <span className="inline-block w-4 text-blue-400">{collapsed[openingIdx] ? '+' : '-'}</span>
-                <span className="font-bold mr-2 capitalize">{opening.type}</span>
-                <span className="text-zinc-400">[{openingIdx}]</span>
-              </button>
-              {!collapsed[openingIdx] && (
-                <div className="mt-2 space-y-1">
-                  {openingInputs[opening.type].map(input => (
-                  <NumberInput
-                    key={input.key}
-                    label={input.label}
-                    value={opening[input.key as keyof typeof opening] as number}
-                    onChange={val => setOpenings(prevOpenings =>
-                      updateOpeningField(
-                        prevOpenings,
-                        prevOpenings[openingIdx].id,
-                        input.key as keyof Opening,
-                        val,
-                        input.min
-                      )
-                    )}
-                  />
-                  ))}
-                </div>
-              )}
-            </li>
-          );
-        })}
+        {openings.map((opening, openingIdx) => (
+          <OpeningItem
+            key={openingIdx}
+            opening={opening}
+            openingIdx={openingIdx}
+            collapsed={collapsed[openingIdx]}
+            toggleCollapse={toggleCollapse}
+            setOpenings={setOpenings}
+            onDelete={(idx: number) => {
+              setOpenings(prev => prev.filter((_, i) => i !== idx));
+              setCollapsed(prev => prev.filter((_, i) => i !== idx));
+            }}
+          />
+        ))}
       </ul>
     </>
   );

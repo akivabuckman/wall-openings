@@ -13,3 +13,15 @@ export function sortAndFromPrevious(openings: Opening[]) {
     }));
     return withFromPrevious;
 };
+
+export function extractXnodes(openings: Opening[]): number[] {
+    const xNodes: number[] = Array.from(
+      new Set(
+        openings.flatMap(opening => [
+          opening.type === 'rectangle' ? opening.x : opening.x - opening.radius,
+          opening.x + (opening.type === 'rectangle' ? opening.width : opening.radius)
+        ])
+      )
+    ).sort((a, b) => a - b);
+  return xNodes;
+};

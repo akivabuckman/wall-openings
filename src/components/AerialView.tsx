@@ -1,7 +1,9 @@
-import React, { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Stage, Layer, Line, Rect } from "react-konva";
 import { Opening } from "../types";
-import { defaultOpeningColor, verticalMeasureWidth } from "../constants";
+import { maxDimension, verticalMeasureWidth } from "../constants";
+import { renderAerialOpening, renderXNodeMeasurements } from "../utils/renderUtils";
+import { extractXnodes } from "../utils/utils";
 
 const AerialView = ({ openings, zoom = 1, stageX = 0 }: { openings: Opening[], zoom?: number, stageX?: number }) => {
   const [containerSize, setContainerSize] = useState<{ width: number; height: number }>({
@@ -9,6 +11,7 @@ const AerialView = ({ openings, zoom = 1, stageX = 0 }: { openings: Opening[], z
     height: 200,
   });
   const containerDivRef = useRef<HTMLDivElement>(null);
+  const xNodes: number[] = extractXnodes(openings);
 
   useEffect(() => {
     function updateContainerSize() {
@@ -36,26 +39,11 @@ const AerialView = ({ openings, zoom = 1, stageX = 0 }: { openings: Opening[], z
           x={Math.min(verticalMeasureWidth, stageX + verticalMeasureWidth)}  
         >
           <Layer>
-            <Rect x={0} y={0} width={999999} height={containerSize.height} fill="gray" />
-            <Line points={[0, 50, 999999, 50]} stroke="#222" strokeWidth={2} />
-            <Line points={[0, 80, 999999, 80]} stroke="#222" strokeWidth={2} />
-            {
-              openings.map(opening => {
-                if (opening.type === 'rectangle') {
-                  return (
-                    <Rect
-                      key={opening.id}
-                      x={opening.x * zoom}
-                      y={50}
-                      width={opening.width * zoom}
-                      height={30}
-                      stroke={defaultOpeningColor}
-                      strokeWidth={2}
-                    />
-                  );
-                }
-              })
-            }
+            <Rect x={0} y={0} width={maxDimension} height={containerSize.height} fill="gray" />
+            <Line points={[0, 50, maxDimension, 50]} stroke="#222" strokeWidth={2} />
+            <Line points={[0, 80, maxDimension, 80]} stroke="#222" strokeWidth={2} />
+            {openings.map(opening => renderAerialOpening(opening, zoom, 50))}
+            {renderXNodeMeasurements(xNodes, containerSize.height)}
           </Layer>
         </Stage>
       </div>

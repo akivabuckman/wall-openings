@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Layer, Rect, Stage } from "react-konva";
 import { Opening } from "../types";
 import VerticalMeasurement from "./VerticalMeasurement";
-import { verticalMeasureWidth } from "../constants";
+import { maxDimension, verticalMeasureWidth } from "../constants";
 
 
 const VerticalMeasurementBar = ({ localZoom, openings, stageY = 0 }: { localZoom: number, openings: Opening[], stageY?: number }) => {
@@ -39,7 +39,7 @@ const VerticalMeasurementBar = ({ localZoom, openings, stageY = 0 }: { localZoom
         y={stageY}
       >
         <Layer>
-          <Rect x={0} y={-999999} width={containerSize.width} height={999999 * 2} fill="grey" />
+          <Rect x={0} y={-maxDimension} width={containerSize.width} height={maxDimension * 2} fill="grey" />
           {/* Render measurements for yNodes */}
           {yNodes
             .slice()

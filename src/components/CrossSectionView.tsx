@@ -5,7 +5,7 @@ import MeasurementBar from "./MeasurementBar";
 import VerticalMeasurementBar from "./VerticalMeasurementBar";
 import { Opening } from "../types";
 import { renderOpening } from "../utils/renderUtils.tsx";
-import { verticalMeasureWidth } from "../constants.ts";
+import { maxDimension } from "../constants.ts";
 
 const CrossSectionView = ({ openings, setOpenings, zoom = 1, stagePos, setStagePos }: {
   openings: Opening[],
@@ -93,10 +93,10 @@ const CrossSectionView = ({ openings, setOpenings, zoom = 1, stagePos, setStageP
                 onWheel={handleWheel}
               >
                 <Layer scaleY={-1}>
-                  <Rect  x={0} y={-9999} width={999999} height={999999} fill="gray"/>
+                  <Rect  x={0} y={-maxDimension / 100} width={maxDimension} height={maxDimension} fill="gray"/>
                   {openings.map((opening, idx) => renderOpening(opening, setOpenings, idx))}
                   <Line
-                    points={[0, 0, 999999, 0]}
+                    points={[0, 0, maxDimension, 0]}
                     stroke="black"
                     strokeWidth={1}
                   />

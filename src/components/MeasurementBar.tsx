@@ -1,18 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { Layer, Rect, Stage } from "react-konva";
 import { Opening } from "../types";
-import Measurement from "./Measurement";
-import { verticalMeasureWidth } from "../constants";
+import { renderOpeningMeasurements, renderXNodeMeasurements } from "../utils/renderUtils";
+import { maxDimension, verticalMeasureWidth } from "../constants";
+import { extractXnodes } from "../utils/utils";
 
 
 const MeasurementBar = ({ localZoom, openings, stageX = 0 }: { localZoom: number, openings: Opening[], stageX?: number }) => {
   const [containerSize, setContainerSize] = useState<{ width: number; height: number }>({ width: 400, height: 60 });
   const containerDivRef = useRef<HTMLDivElement>(null);
 
-  const xNodes: number[] = openings.flatMap(opening => [
-    opening.type === 'rectangle' ? opening.x : opening.x - opening.radius,
-    opening.x + (opening.type === 'rectangle' ? opening.width : opening.radius)
-  ]).sort((a, b) => a - b);
+  const xNodes: number[] = extractXnodes(openings);
 
   useEffect(() => {
     function updateContainerSize() {
@@ -39,37 +37,9 @@ const MeasurementBar = ({ localZoom, openings, stageX = 0 }: { localZoom: number
         x={Math.min(verticalMeasureWidth, stageX + verticalMeasureWidth)}
       >
         <Layer>
-          <Rect x={0} y={0} width={999999} height={containerSize.height} fill="grey" />
-          {/* Render measurements for each opening index */}
-          {[...openings]
-            .sort((a, b) => a.x - b.x || a.id - b.id)
-            .map((opening, i, arr) => {
-              if (i === 0 || opening.fromPrevious === 0) return null;
-              const prev = arr[i - 1];
-              return (
-                <Measurement
-                  key={opening.id}
-                  startX={prev.x}
-                  endX={opening.x}
-                  y={containerSize.height / 2 - 10}
-                />
-              );
-            })}
-          {/* Render measurements for xNodes below the existing bar */}
-          {xNodes
-            .slice()
-            .sort((a, b) => a - b)
-            .map((x, i, arr) => {
-              if (i === 0) return null;
-              return (
-                <Measurement
-                  key={"xnode-" + i}
-                  startX={arr[i - 1]}
-                  endX={x}
-                  y={containerSize.height / 2 + 18}
-                />
-              );
-            })}
+          <Rect x={0} y={0} width={maxDimension} height={containerSize.height} fill="grey" />
+          {renderOpeningMeasurements(openings, containerSize.height)}
+          {renderXNodeMeasurements(xNodes, containerSize.height)}
         </Layer>
       </Stage>
     </div>

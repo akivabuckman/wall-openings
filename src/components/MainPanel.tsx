@@ -1,12 +1,12 @@
 import { useState, useCallback, Dispatch, SetStateAction } from "react";
 import { Opening } from "../types";
 import AerialView from "./AerialView";
-import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from "../constants";
+// import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from "../constants";
 import CrossSectionView from "./CrossSectionView";
 
 const MainPanel = ({ openings, setOpenings }: { openings: Opening[], setOpenings: Dispatch<SetStateAction<Opening[]>> }) => {
   const [zoom, setZoom] = useState(1);
-  const [stagePos, setStagePos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [stagePos, setStagePos] = useState<{ x: number; y: number }>({ x: 0, y: 600 });
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
     // e.preventDefault();
