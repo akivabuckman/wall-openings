@@ -4,11 +4,12 @@ import { tickAngle, tickLength } from "../constants";
 interface TickProps {
   x: number;
   y: number;
+  rotation?: number;
 }
 
 
-const Tick = ({ x, y }: TickProps) => {
-  const rad = (tickAngle * Math.PI) / 180;
+const Tick = ({ x, y, rotation = 0 }: TickProps) => {
+  const rad = ((tickAngle + rotation) * Math.PI) / 180;
   const dx = (tickLength / 2) * Math.cos(rad);
   const dy = (tickLength / 2) * Math.sin(rad);
   return (

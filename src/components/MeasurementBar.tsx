@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { Layer, Rect, Stage } from "react-konva";
 import { Opening } from "../types";
 import Measurement from "./Measurement";
+import { verticalMeasureWidth } from "../constants";
 
 
-const MeasurementBar = ({ localZoom, openings }: { localZoom: number, openings: Opening[] }) => {
+const MeasurementBar = ({ localZoom, openings, stageX = 0 }: { localZoom: number, openings: Opening[], stageX?: number }) => {
   const [containerSize, setContainerSize] = useState<{ width: number; height: number }>({ width: 400, height: 60 });
   const containerDivRef = useRef<HTMLDivElement>(null);
 
@@ -13,7 +14,6 @@ const MeasurementBar = ({ localZoom, openings }: { localZoom: number, openings: 
     opening.x + (opening.type === 'rectangle' ? opening.width : opening.radius)
   ]).sort((a, b) => a - b);
 
-  console.log(xNodes.flat());
   useEffect(() => {
     function updateContainerSize() {
       if (containerDivRef.current) {
@@ -29,13 +29,14 @@ const MeasurementBar = ({ localZoom, openings }: { localZoom: number, openings: 
   }, []);
 
   return (
-    <div ref={containerDivRef} className="w-full border flex flex-col items-center justify-center rounded-b-lg">
+    <div ref={containerDivRef} className="w-full border flex flex-col items-center justify-center rounded-b-lg" >
       <Stage
         width={containerSize.width}
         height={containerSize.height}
         className="rounded shadow"
         scaleX={localZoom}
         scaleY={localZoom}
+        x={Math.min(verticalMeasureWidth, stageX + verticalMeasureWidth)}
       >
         <Layer>
           <Rect x={0} y={0} width={999999} height={containerSize.height} fill="grey" />

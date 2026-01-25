@@ -1,13 +1,19 @@
-
-
 import { useRef, useEffect, useState, SetStateAction, Dispatch } from "react";
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { Stage, Layer, Rect, Line } from "react-konva";
 import MeasurementBar from "./MeasurementBar";
+import VerticalMeasurementBar from "./VerticalMeasurementBar";
 import { Opening } from "../types";
 import { renderOpening } from "../utils/renderUtils.tsx";
+import { verticalMeasureWidth } from "../constants.ts";
 
-const CrossSectionView = ({ openings, setOpenings, zoom = 1 }: { openings: Opening[], setOpenings: Dispatch<SetStateAction<Opening[]>>, zoom?: number }) => {
+const CrossSectionView = ({ openings, setOpenings, zoom = 1, stagePos, setStagePos }: {
+  openings: Opening[],
+  setOpenings: Dispatch<SetStateAction<Opening[]>>,
+  zoom?: number,
+  stagePos: { x: number; y: number },
+  setStagePos: (pos: { x: number; y: number }) => void
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<{ width: number; height: number }>({ width: 400, height: 200 });
 
@@ -26,7 +32,6 @@ const CrossSectionView = ({ openings, setOpenings, zoom = 1 }: { openings: Openi
   }, []);
 
   const [localZoom, setLocalZoom] = useState(zoom);
-  const [stagePos, setStagePos] = useState<{ x: number; y: number }>({ x: 0, y: size.height * (1 - zoom) - 30 });
 
   useEffect(() => {
     setLocalZoom(zoom);
@@ -60,34 +65,47 @@ const CrossSectionView = ({ openings, setOpenings, zoom = 1 }: { openings: Openi
   return (
     <section className="flex-1 min-h-0 rounded-t-lg shadow-inner flex flex-col items-center justify-center">
       <div className="w-full flex-1 flex flex-col">
-        <div ref={containerRef} className="w-full flex-1 flex items-center justify-center">
-          <Stage
-            width={size.width}
-            height={size.height}
-            className="rounded shadow"
-            scaleX={localZoom}
-            scaleY={localZoom}
-            x={Math.min(0, stagePos.x)}
-            y={stagePos.y}
-            draggable
-            dragBoundFunc={(pos) => ({
-              x: Math.min(0, pos.x),
-              y: pos.y
-            })}
-            onWheel={handleWheel}
-          >
-            <Layer scaleY={-1}>
-              <Rect  x={0} y={-9999} width={999999} height={999999} fill="gray"/>
-              {openings.map((opening, idx) => renderOpening(opening, setOpenings, idx))}
-              <Line
-                points={[0, 0, 999999, 0]}
-                stroke="black"
-                strokeWidth={1}
-              />
-            </Layer>
-          </Stage>
+        <div className="w-full flex-1 flex flex-row relative">
+          <div className="absolute left-0 top-0 h-full" >
+            <VerticalMeasurementBar localZoom={localZoom} openings={openings} stageY={stagePos.y} />
+          </div>
+          {/* <div className="flex-1 flex items-center justify-center" > */}
+            <div ref={containerRef} className="w-full h-full flex items-center justify-center ml-24">
+              <Stage
+                width={size.width}
+                height={size.height}
+                className="rounded shadow"
+                scaleX={localZoom}
+                scaleY={localZoom}
+                x={Math.min(0, stagePos.x)}
+                y={stagePos.y}
+                draggable
+                dragBoundFunc={(pos) => ({
+                  x: Math.min(0, pos.x),
+                  y: pos.y
+                })}
+                onDragMove={(e) => {
+                  const stage = e.target.getStage();
+                  if (stage) {
+                    setStagePos({ x: stage.x(), y: stage.y() });
+                  }
+                }}
+                onWheel={handleWheel}
+              >
+                <Layer scaleY={-1}>
+                  <Rect  x={0} y={-9999} width={999999} height={999999} fill="gray"/>
+                  {openings.map((opening, idx) => renderOpening(opening, setOpenings, idx))}
+                  <Line
+                    points={[0, 0, 999999, 0]}
+                    stroke="black"
+                    strokeWidth={1}
+                  />
+                </Layer>
+              </Stage>
+            </div>
+          {/* </div> */}
         </div>
-        <MeasurementBar localZoom={localZoom} openings={openings}/>
+        <MeasurementBar localZoom={localZoom} openings={openings} stageX={stagePos.x} />
       </div>
     </section>
   );

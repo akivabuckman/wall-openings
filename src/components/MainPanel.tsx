@@ -1,14 +1,12 @@
-
 import { useState, useCallback, Dispatch, SetStateAction } from "react";
 import { Opening } from "../types";
-import CrossSectionView from "./CrossSectionView";
 import AerialView from "./AerialView";
 import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from "../constants";
-
-
+import CrossSectionView from "./CrossSectionView";
 
 const MainPanel = ({ openings, setOpenings }: { openings: Opening[], setOpenings: Dispatch<SetStateAction<Opening[]>> }) => {
   const [zoom, setZoom] = useState(1);
+  const [stagePos, setStagePos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
     // e.preventDefault();
@@ -20,12 +18,22 @@ const MainPanel = ({ openings, setOpenings }: { openings: Opening[], setOpenings
   }, []);
 
   return (
-    <main className="flex flex-col flex-1 h-full" onWheel={handleWheel} tabIndex={0} style={{ outline: "none" }}>
-      <div className="flex-3 flex flex-col min-h-0" style={{flex: 3}}>
-        <CrossSectionView openings={openings} setOpenings={setOpenings} zoom={zoom}  />
+    <main className="flex flex-col flex-1 h-full min-h-0" onWheel={handleWheel} tabIndex={0} style={{ outline: "none", minHeight: 0 }}>
+      <div className="flex-3 flex flex-col min-h-0" style={{ flex: 3, minHeight: 0 }}>
+        <CrossSectionView 
+          openings={openings} 
+          setOpenings={setOpenings} 
+          zoom={zoom} 
+          stagePos={stagePos}
+          setStagePos={setStagePos}
+        />
       </div>
-      <div className="flex-1 min-h-0">
-        <AerialView zoom={zoom} />
+      <div className="flex-1" >
+        <AerialView 
+          openings={openings} 
+          zoom={zoom} 
+          stageX={stagePos.x}
+        />
       </div>
     </main>
   );
