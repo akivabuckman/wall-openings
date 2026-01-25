@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Opening } from "../types";
 import OpeningsList from "./OpeningsList";
 
