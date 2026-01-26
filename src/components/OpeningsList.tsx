@@ -2,14 +2,14 @@ import { Opening } from "../types";
 import { Dispatch, SetStateAction, useState } from "react";
 import OpeningItem from "./OpeningItem";
 import { Plus } from "lucide-react";
-import { defaultOpeningColor } from "../constants";
 
 interface OpeningsListProps {
   openings: Opening[];
   setOpenings: Dispatch<SetStateAction<Opening[]>>;
+  hoveredOpeningId: number | null;
 }
 
-const OpeningsList = ({ openings, setOpenings }: OpeningsListProps) => {
+const OpeningsList = ({ openings, setOpenings, hoveredOpeningId }: OpeningsListProps) => {
   const [collapsed, setCollapsed] = useState<boolean[]>(() => openings.map(() => false));
 
   const toggleCollapse = (idx: number) => {
@@ -26,7 +26,7 @@ const OpeningsList = ({ openings, setOpenings }: OpeningsListProps) => {
         y: 0,
         width: 50,
         height: 30,
-        color: defaultOpeningColor,
+        color: "red",
         fromPrevious: 0,
         xIndex: prev.length,
       }
@@ -58,6 +58,7 @@ const OpeningsList = ({ openings, setOpenings }: OpeningsListProps) => {
               setOpenings(prev => prev.filter((_, i) => i !== idx));
               setCollapsed(prev => prev.filter((_, i) => i !== idx));
             }}
+            isShapeHovered={hoveredOpeningId === opening.id}
           />
         ))}
       </ul>
