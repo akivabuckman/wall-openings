@@ -31,7 +31,7 @@ const App = () => {
 
   return (
     <>
-      {showMobileModal && <MobileModal onClose={handleCloseMobileModal} />}
+      {/* {showMobileModal && <MobileModal onClose={handleCloseMobileModal} />} */}
       <div className="flex h-screen bg-zinc-950 dark">
         <Sidebar openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} />
         <MainPanel openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} setHoveredOpeningId={setHoveredOpeningId} />
