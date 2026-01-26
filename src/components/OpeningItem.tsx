@@ -14,6 +14,7 @@ interface OpeningItemProps {
   toggleCollapse: (idx: number) => void;
   setOpenings: Dispatch<SetStateAction<Opening[]>>;
   onDelete: (idx: number) => void;
+  isShapeHovered?: boolean;
 }
 
 const openingInputs = {
@@ -32,7 +33,7 @@ const openingInputs = {
   ],
 };
 
-const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenings, onDelete }: OpeningItemProps) => {
+const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenings, onDelete, isShapeHovered }: OpeningItemProps) => {
   const [showModal, setShowModal] = useState(false);
   const typeIcon = opening.type === 'rectangle'
     ? <Square className="w-5 h-5" strokeWidth={2.2} style={{ color: opening.color }} />
@@ -42,8 +43,13 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
     setOpenings(prev => prev.map((o, i) => i === openingIdx ? { ...o, color } : o));
   };
 
+  const generateBorderColorClass = (color: string, shapeHover: boolean) => {
+    return shapeHover ? `border-${color}-400` : `border-zinc-700 hover:border-${color}-400`;
+  };
+
   return (
-    <li className="bg-zinc-800 rounded-lg px-4 py-3 text-zinc-100 text-sm flex flex-col gap-2 shadow border border-zinc-700 hover:border-blue-400 transition-all">
+    <li className={
+      `w-80 bg-zinc-800 rounded-lg px-4 py-3 text-zinc-100 text-sm flex flex-col gap-2 shadow border border-2 transition-all ${(generateBorderColorClass(opening.color, !!isShapeHovered))}`    }>
       <div className="flex items-center gap-3 w-full">
         <button
           className="flex items-center gap-3 flex-1 text-left focus:outline-none group"

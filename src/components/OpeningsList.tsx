@@ -6,9 +6,10 @@ import { Plus } from "lucide-react";
 interface OpeningsListProps {
   openings: Opening[];
   setOpenings: Dispatch<SetStateAction<Opening[]>>;
+  hoveredOpeningId: number | null;
 }
 
-const OpeningsList = ({ openings, setOpenings }: OpeningsListProps) => {
+const OpeningsList = ({ openings, setOpenings, hoveredOpeningId }: OpeningsListProps) => {
   const [collapsed, setCollapsed] = useState<boolean[]>(() => openings.map(() => false));
 
   const toggleCollapse = (idx: number) => {
@@ -57,6 +58,7 @@ const OpeningsList = ({ openings, setOpenings }: OpeningsListProps) => {
               setOpenings(prev => prev.filter((_, i) => i !== idx));
               setCollapsed(prev => prev.filter((_, i) => i !== idx));
             }}
+            isShapeHovered={hoveredOpeningId === opening.id}
           />
         ))}
       </ul>

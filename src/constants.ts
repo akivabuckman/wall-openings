@@ -38,12 +38,12 @@ export const defaultOpenings: Opening[] = [{
     xIndex: 2
 }];
 export const colorOptions: { name: string; value: string }[] = [
-  { name: 'red', value: '#ef4444' },
-  { name: 'orange', value: '#fb923c' },
-  { name: 'yellow', value: '#fde047' },
-  { name: 'green', value: '#22c55e' },
-  { name: 'blue', value: '#3b82f6' },
-  { name: 'purple', value: '#a855f7' },
-  { name: 'cyan', value: '#06b6d4' },
-  { name: 'white', value: '#fff' },
+  { name: 'Red', value: '#ef4444' },
+  { name: 'Orange', value: '#fb923c' },
+  { name: 'Yellow', value: '#fde047' },
+  { name: 'Green', value: '#22c55e' },
+  { name: 'Blue', value: '#3b82f6' },
+  { name: 'Purple', value: '#a855f7' },
+  { name: 'Cyan', value: '#06b6d4' },
+  { name: 'White', value: '#fff' },
 ];
