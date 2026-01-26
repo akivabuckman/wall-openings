@@ -5,7 +5,7 @@ import OpeningsList from "./OpeningsList";
 const Sidebar = ({ openings, setOpenings, hoveredOpeningId }: { 
   openings: Opening[],
   setOpenings: Dispatch<SetStateAction<Opening[]>>,
-  hoveredOpeningId?: number | null,
+  hoveredOpeningId: number | null,
 }) => {
 
   return (
