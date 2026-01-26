@@ -11,9 +11,9 @@ const ColorDropdown: React.FC<ColorDropdownProps> = ({ value, onChange }) => {
   const selectedOption = colorOptions.find(opt => opt.name === colorName);
   return (
     <label className="flex items-center gap-2 text-xs font-semibold">
-      <span>Color:</span>
       <select
-        className="rounded px-2 py-1 bg-zinc-700 text-zinc-100 border border-zinc-600 focus:outline-none focus:ring focus:border-blue-400"
+        className="rounded px-2 py-1 bg-zinc-700 border border-zinc-600 focus:outline-none focus:ring focus:border-blue-400"
+        style={{ color: selectedOption ? selectedOption.value : colorOptions[0].value }}
         value={selectedOption ? selectedOption.name : colorOptions[0].name}
         onChange={e => onChange(e.target.value)}
       >

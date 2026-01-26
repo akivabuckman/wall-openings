@@ -35,8 +35,8 @@ const openingInputs = {
 const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenings, onDelete }: OpeningItemProps) => {
   const [showModal, setShowModal] = useState(false);
   const typeIcon = opening.type === 'rectangle'
-    ? <Square className="text-blue-400 w-5 h-5" strokeWidth={2.2} />
-    : <LucideCircle className="text-blue-400 w-5 h-5" strokeWidth={2.2} />;
+    ? <Square className="w-5 h-5" strokeWidth={2.2} style={{ color: opening.color }} />
+    : <LucideCircle className="w-5 h-5" strokeWidth={2.2} style={{ color: opening.color }} />;
 
   const onColorChange = (color: string) => {
     setOpenings(prev => prev.map((o, i) => i === openingIdx ? { ...o, color } : o));

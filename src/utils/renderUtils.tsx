@@ -38,40 +38,22 @@ export function renderXNodeMeasurements(xNodes: number[], containerHeight: numbe
       );
     });
 }
-// Render a rectangle or circle for AerialView (transparent overlay)
 export function renderAerialOpening(opening: Opening, zoom: number, y: number = 50) {
-  if (opening.type === 'rectangle') {
+    const openingWidth = opening.type === 'rectangle' ? opening.width * zoom : opening.radius * 2 * zoom;
+    const openingX = opening.type === 'rectangle' ? opening.x * zoom : (opening.x - opening.radius) * zoom;
     return (
       <Rect
         key={opening.id}
-        x={opening.x * zoom}
+        x={openingX}
         y={y}
-        width={opening.width * zoom}
+        width={openingWidth}
         height={30}
         stroke={opening.color ?? '#888'}
         strokeWidth={2}
         fill="rgba(0,0,0,0.08)"
-        dash={[6, 4]}
         listening={false}
       />
     );
-  } else if (opening.type === 'circle') {
-    return (
-      <Rect
-        key={opening.id}
-        x={(opening.x - opening.radius) * zoom}
-        y={y}
-        width={opening.radius * 2 * zoom}
-        height={30}
-        stroke={opening.color ?? '#888'}
-        strokeWidth={2}
-        fill="rgba(0,0,0,0.08)"
-        dash={[6, 4]}
-        listening={false}
-      />
-    );
-  }
-  return null;
 }
 
 function recalcXIndex(openings: Opening[]): Opening[] {
