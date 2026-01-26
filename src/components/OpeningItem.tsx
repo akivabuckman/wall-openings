@@ -3,6 +3,7 @@ import { Opening } from "../types";
 import { updateOpeningField } from "../utils/renderUtils";
 import NumberInput from "./NumberInput";
 import { Dispatch, SetStateAction, useState } from "react";
+import ColorDropdown from "./ColorDropdown";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import { ChevronDown, ChevronRight, Square, Circle as LucideCircle, Trash2 } from "lucide-react";
 
@@ -36,6 +37,10 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
   const typeIcon = opening.type === 'rectangle'
     ? <Square className="text-blue-400 w-5 h-5" strokeWidth={2.2} />
     : <LucideCircle className="text-blue-400 w-5 h-5" strokeWidth={2.2} />;
+
+  const onColorChange = (color: string) => {
+    setOpenings(prev => prev.map((o, i) => i === openingIdx ? { ...o, color } : o));
+  };
 
   return (
     <li className="bg-zinc-800 rounded-lg px-4 py-3 text-zinc-100 text-sm flex flex-col gap-2 shadow border border-zinc-700 hover:border-blue-400 transition-all">
@@ -72,6 +77,10 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
       </div>
       {!collapsed && (
         <div className="mt-1 flex flex-col gap-2">
+          <ColorDropdown
+            value={opening.color}
+            onChange={onColorChange}
+          />
           {openingInputs[opening.type].map(input => (
             <NumberInput
               key={input.key}

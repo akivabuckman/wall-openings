@@ -2,7 +2,6 @@ import { Opening } from "../types";
 import { Dispatch, SetStateAction, useState } from "react";
 import OpeningItem from "./OpeningItem";
 import { Plus } from "lucide-react";
-import { defaultOpeningColor } from "../constants";
 
 interface OpeningsListProps {
   openings: Opening[];
@@ -26,7 +25,7 @@ const OpeningsList = ({ openings, setOpenings }: OpeningsListProps) => {
         y: 0,
         width: 50,
         height: 30,
-        color: defaultOpeningColor,
+        color: "red",
         fromPrevious: 0,
         xIndex: prev.length,
       }
