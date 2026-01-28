@@ -45,7 +45,8 @@ const OpeningsList = ({ openings, setOpenings, hoveredOpeningId }: OpeningsListP
           Add Opening
         </button>
       </div>
-      <ul className="space-y-2">
+      <div className="overflow-y-auto pr-1">
+        <ul className="space-y-2">
         {openings.map((opening, openingIdx) => (
           <OpeningItem
             key={openingIdx}
@@ -61,7 +62,8 @@ const OpeningsList = ({ openings, setOpenings, hoveredOpeningId }: OpeningsListP
             isShapeHovered={hoveredOpeningId === opening.id}
           />
         ))}
-      </ul>
+        </ul>
+      </div>
     </>
   );
 };

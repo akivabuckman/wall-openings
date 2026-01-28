@@ -1,4 +1,3 @@
-
 import { Opening } from "../types";
 import { updateOpeningField } from "../utils/renderUtils";
 import NumberInput from "./NumberInput";
@@ -47,6 +46,30 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
     return shapeHover ? `border-${color}-400` : `border-zinc-700 hover:border-${color}-400`;
   };
 
+  const handleShapeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newType = e.target.value as "rectangle" | "circle";
+    setOpenings(prev =>
+      prev.map((o, i) => {
+        if (i !== openingIdx) return o;
+        const { x, y, color, id, fromPrevious, xIndex } = o;
+        if (newType === "rectangle") {
+          return {
+            type: "rectangle",
+            x, y, color, id, fromPrevious, xIndex,
+            width: "width" in o ? o.width : 50,
+            height: "height" in o ? o.height : 50,
+          };
+        } else {
+          return {
+            type: "circle",
+            x, y, color, id, fromPrevious, xIndex,
+            radius: "radius" in o ? o.radius : 25,
+          };
+        }
+      })
+    );
+  };
+
   return (
     <li className={
       `w-80 bg-zinc-800 rounded-lg px-4 py-3 text-zinc-100 text-sm flex flex-col gap-2 shadow border border-2 transition-all ${(generateBorderColorClass(opening.color, !!isShapeHovered))}`    }>
@@ -87,6 +110,18 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
             value={opening.color}
             onChange={onColorChange}
           />
+            <div className="flex items-center gap-2 px-8 mb-2">
+              <label htmlFor={`shape-select-${openingIdx}`} className="text-left text-zinc-400 w-36">Shape:</label>
+              <select
+                id={`shape-select-${openingIdx}`}
+                className="w-36 h-8 rounded-md border border-zinc-600 bg-zinc-900 px-2 py-1 text-base text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 shadow-sm"
+                value={opening.type}
+                onChange={handleShapeChange}
+              >
+                <option value="rectangle">Rectangle</option>
+                <option value="circle">Circle</option>
+              </select>
+            </div>
           {openingInputs[opening.type].map(input => (
             <NumberInput
               key={input.key}
