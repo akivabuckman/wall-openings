@@ -162,7 +162,7 @@ function renderRectangleOpening(
     <Group
       key={idx}
       x={opening.x}
-      y={opening.y + opening.height}
+      y={opening.elevation + opening.height}
       draggable
       dragBoundFunc={pos => ({ ...pos, x: Math.max(0, Math.round(pos.x)), y: Math.max(0, Math.round(pos.y)) })}
       scaleY={-1}
@@ -222,7 +222,7 @@ function renderCircleOpening(
     <Group
       key={idx}
       x={opening.x}
-      y={opening.y}
+      y={opening.elevation}
       scaleY={-1}
       draggable
       dragBoundFunc={pos => ({ ...pos, x: Math.max(0, Math.round(pos.x)), y: Math.max(0, Math.round(pos.y)) })}

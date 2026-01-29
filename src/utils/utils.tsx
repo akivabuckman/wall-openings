@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { Opening } from "../types";
 
 export function sortAndFromPrevious(openings: Opening[]) {
@@ -24,4 +25,8 @@ export function extractXnodes(openings: Opening[]): number[] {
       )
     ).sort((a, b) => a - b);
   return xNodes;
+};
+
+export function generateWallId(): string {
+  return nanoid(8).toUpperCase();
 };

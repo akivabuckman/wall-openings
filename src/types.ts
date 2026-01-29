@@ -1,6 +1,6 @@
 interface OpeningBase {
   x: number;
-  y: number;
+  elevation: number;
   color: string;
   id: number;
   fromPrevious: number;

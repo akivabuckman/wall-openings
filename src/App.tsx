@@ -3,17 +3,15 @@ import Sidebar from './components/Sidebar';
 import MainPanel from './components/MainPanel';
 import { Opening } from './types';
 import { useState, useEffect } from 'react';
-// import MobileModal from './components/MobileModal';
 import { defaultOpenings } from './constants';
 import getSocket from './utils/socket';
-
-
+import { generateWallId } from './utils/utils';
 
 const App = () => {
-
   const [openings, setOpenings] = useState<Opening[]>(defaultOpenings);
   const [hoveredOpeningId, setHoveredOpeningId] = useState<number | null>(null);
   const [showMobileModal, setShowMobileModal] = useState<boolean>(false);
+  const [wallId, setWallId] = useState<string>("");
 
   const handleCloseMobileModal = () => {
     setShowMobileModal(false);
@@ -31,9 +29,17 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    let id = new URLSearchParams(window.location.search).get('wallId');
+    if (!id) {
+      id = generateWallId();
+      const params = new URLSearchParams(window.location.search);
+      params.set('wallId', id);
+      window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+    }
+    setWallId(id);
     const socket = getSocket();
     socket.on('connect', () => {
-      console.log(socket)
+      socket.emit('wall:join', id);
     });
     return () => {
       socket.off('connect');
@@ -44,7 +50,7 @@ const App = () => {
     <>
       {/* {showMobileModal && <MobileModal onClose={handleCloseMobileModal} />} */}
       <div className="flex h-screen bg-zinc-950 dark">
-        <Sidebar openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} />
+        <Sidebar wallId={wallId} openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} />
         <MainPanel openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} setHoveredOpeningId={setHoveredOpeningId} />
       </div>
     </>
