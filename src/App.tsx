@@ -3,8 +3,9 @@ import Sidebar from './components/Sidebar';
 import MainPanel from './components/MainPanel';
 import { Opening } from './types';
 import { useState, useEffect } from 'react';
-import MobileModal from './components/MobileModal';
+// import MobileModal from './components/MobileModal';
 import { defaultOpenings } from './constants';
+import getSocket from './utils/socket';
 
 
 
@@ -27,6 +28,16 @@ const App = () => {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    const socket = getSocket();
+    socket.on('connect', () => {
+      console.log(socket)
+    });
+    return () => {
+      socket.off('connect');
+    };
   }, []);
 
   return (
