@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, SetStateAction, Dispatch } from "react";
 import type { KonvaEventObject } from 'konva/lib/Node';
-import { Stage, Layer, Rect, Line } from "react-konva";
+import { Stage, Layer, Rect, Line, Group } from "react-konva";
 import MeasurementBar from "./MeasurementBar";
 import VerticalMeasurementBar from "./VerticalMeasurementBar";
 import { Opening } from "../types";
@@ -97,9 +97,9 @@ const CrossSectionView = ({ openings, setOpenings, zoom = 1, stagePos, setStageP
                 <Layer scaleY={-1}>
                   <Rect  x={0} y={-maxDimension / 100} width={maxDimension} height={maxDimension} fill="gray"/>
                   {openings.map((opening, idx) => (
-                      <g key={opening.id} onMouseEnter={() => onEnter(opening)} onMouseLeave={onLeave}>
+                      <Group key={opening.id} onMouseEnter={() => onEnter(opening)} onMouseLeave={onLeave}>
                         {renderOpening(opening, setOpenings, idx)}
-                      </g>
+                      </Group>
                   ))}
                   <Line
                     points={[0, 0, maxDimension, 0]}

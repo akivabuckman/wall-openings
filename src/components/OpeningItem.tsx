@@ -51,18 +51,18 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
     setOpenings(prev =>
       prev.map((o, i) => {
         if (i !== openingIdx) return o;
-        const { x, y, color, id, fromPrevious, xIndex } = o;
+        const { x, elevation, color, id, fromPrevious, xIndex } = o;
         if (newType === "rectangle") {
           return {
             type: "rectangle",
-            x, y, color, id, fromPrevious, xIndex,
+            x, elevation, color, id, fromPrevious, xIndex,
             width: "width" in o ? o.width : 50,
             height: "height" in o ? o.height : 50,
           };
         } else {
           return {
             type: "circle",
-            x, y, color, id, fromPrevious, xIndex,
+            x, elevation, color, id, fromPrevious, xIndex,
             radius: "radius" in o ? o.radius : 25,
           };
         }
