@@ -1,9 +1,10 @@
+import { initializeSocketManager } from './utils/socketManager';
 import "./App.css";
 import Sidebar from './components/Sidebar';
 import MainPanel from './components/MainPanel';
 import { Opening } from './types';
-import { useState, useEffect } from 'react';
-import { defaultOpenings } from './constants';
+import { useState, useEffect, useRef } from 'react';
+import { defaultOpenings, shapeMoveDebounceMs } from './constants';
 import getSocket from './utils/socket';
 import { generateWallId } from './utils/utils';
 
@@ -12,6 +13,7 @@ const App = () => {
   const [hoveredOpeningId, setHoveredOpeningId] = useState<number | null>(null);
   const [showMobileModal, setShowMobileModal] = useState<boolean>(false);
   const [wallId, setWallId] = useState<string>("");
+  const socketRef = useRef<ReturnType<typeof initializeSocketManager> | null>(null);
 
   const handleCloseMobileModal = () => {
     setShowMobileModal(false);
@@ -29,15 +31,16 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    let id = new URLSearchParams(window.location.search).get('wallId');
-    if (!id) {
-      id = generateWallId();
-      const params = new URLSearchParams(window.location.search);
-      params.set('wallId', id);
-      window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+    // Initialize socket only once
+    if (!socketRef.current) {
+      socketRef.current = initializeSocketManager(setOpenings);
     }
+    const socket = socketRef.current;
+    const id = new URLSearchParams(window.location.search).get('wallId') || generateWallId();
+    const params = new URLSearchParams(window.location.search);
+    params.set('wallId', id);
+    window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
     setWallId(id);
-    const socket = getSocket();
     socket.on('connect', () => {
       socket.emit('wall:join', id);
     });
@@ -45,6 +48,23 @@ const App = () => {
       socket.off('connect');
     };
   }, []);
+
+  const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    const socket = socketRef.current;
+    if (!socket) return;
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+    debounceTimeout.current = setTimeout(() => {
+      socket.emit('openingChange', openings);
+    }, shapeMoveDebounceMs);
+    return () => {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+    };
+  }, [openings]);
 
   return (
     <>

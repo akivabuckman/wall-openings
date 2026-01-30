@@ -126,9 +126,9 @@ function handleDragMove(e: { target: { position: () => { x: number; y: number } 
     const updated = prev.map((o) => {
       if (o.id !== draggedId) return o;
       if (o.type === 'rectangle') {
-        return { ...o, x, y: y - o.height };
+        return { ...o, x, elevation: y - o.height };
       }
-      return { ...o, x, y };
+      return { ...o, x, elevation: y };
     });
     // Sort for fromPrevious/index calculation
     const sorted = [...updated].sort((a, b) => {
