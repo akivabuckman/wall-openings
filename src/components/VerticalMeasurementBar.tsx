@@ -10,8 +10,8 @@ const VerticalMeasurementBar = ({ localZoom, openings, stageY = 0 }: { localZoom
   const containerDivRef = useRef<HTMLDivElement>(null);
 
   const yNodes: number[] = openings.flatMap(opening => [
-    opening.type === 'rectangle' ? opening.y : opening.y - opening.radius,
-    opening.y + (opening.type === 'rectangle' ? opening.height : opening.radius)
+    opening.type === 'rectangle' ? opening.elevation : opening.elevation - opening.radius,
+    opening.elevation + (opening.type === 'rectangle' ? opening.height : opening.radius)
   ]).sort((a, b) => a - b);
 
   useEffect(() => {

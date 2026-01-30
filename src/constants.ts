@@ -19,3 +19,4 @@ export const colorOptions: { name: string; value: string }[] = [
   { name: 'Cyan', value: '#06b6d4' },
   { name: 'White', value: '#fff' },
 ];
+export const shapeMoveDebounceMs = 300;
