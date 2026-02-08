@@ -4,12 +4,14 @@ import OpeningsList from "./OpeningsList";
 import { Copy, Check } from "lucide-react";
 
 
-const Sidebar = ({ wallId, openings, setOpenings, hoveredOpeningId }: { 
-  wallId: string,
-  openings: Opening[],
-  setOpenings: Dispatch<SetStateAction<Opening[]>>,
-  hoveredOpeningId: number | null,
-}) => {
+interface SidebarProps {
+  wallId: string;
+  openings: Opening[];
+  hoveredOpeningId: number | null;
+  updateOpening: (opening: Opening) => void;
+}
+
+const Sidebar = ({ wallId, openings, hoveredOpeningId, updateOpening }: SidebarProps) => {
   const [copied, setCopied] = useState<boolean>(false);
   const handleCopyWallId = () => {
     navigator.clipboard.writeText(wallId);
@@ -34,7 +36,7 @@ const Sidebar = ({ wallId, openings, setOpenings, hoveredOpeningId }: {
           {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-zinc-400" />}
         </button>
       </div>
-      <OpeningsList openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} />
+      <OpeningsList openings={openings} updateOpening={updateOpening} hoveredOpeningId={hoveredOpeningId} />
     </aside>
   );
 };

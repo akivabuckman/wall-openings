@@ -4,12 +4,14 @@ import AerialView from "./AerialView";
 // import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from "../constants";
 import CrossSectionView from "./CrossSectionView";
 
-const MainPanel = ({ openings, setOpenings, hoveredOpeningId, setHoveredOpeningId }: {
-  openings: Opening[],
-  setOpenings: Dispatch<SetStateAction<Opening[]>>,
-  hoveredOpeningId?: number | null,
-  setHoveredOpeningId?: (id: number | null) => void
-}) => {
+interface MainPanelProps {
+  openings: Opening[];
+  hoveredOpeningId?: number | null;
+  setHoveredOpeningId?: (id: number | null) => void;
+  updateOpening: (opening: Opening) => void;
+}
+
+const MainPanel = ({ openings, hoveredOpeningId, setHoveredOpeningId, updateOpening }: MainPanelProps) => {
   const [zoom, setZoom] = useState(1);
   const [stagePos, setStagePos] = useState<{ x: number; y: number }>({ x: 0, y: 600 });
 
@@ -27,7 +29,7 @@ const MainPanel = ({ openings, setOpenings, hoveredOpeningId, setHoveredOpeningI
       <div className="flex-3 flex flex-col min-h-0" style={{ flex: 3, minHeight: 0 }}>
         <CrossSectionView 
           openings={openings} 
-          setOpenings={setOpenings} 
+          updateOpening={updateOpening}
           zoom={zoom} 
           stagePos={stagePos}
           setStagePos={setStagePos}

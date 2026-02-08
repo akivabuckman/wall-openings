@@ -4,7 +4,7 @@ import { Opening } from "../types";
 import { Dispatch, SetStateAction } from "react";
 
 // Render measurements for each opening index (between openings)
-export function renderOpeningMeasurements(openings: Opening[], containerHeight: number) {
+export function renderOpeningMeasurements(openings: Opening[], containerHeight: number, px?: number) {
   return [...openings]
     .sort((a, b) => a.x - b.x || a.id - b.id)
     .map((opening, i, arr) => {
@@ -15,7 +15,7 @@ export function renderOpeningMeasurements(openings: Opening[], containerHeight: 
           key={opening.id}
           startX={prev.x}
           endX={opening.x}
-          y={containerHeight / 2 - 10}
+          y={containerHeight / 2 - 10 + (px ?? 0)}
         />
       );
     });
@@ -39,8 +39,8 @@ export function renderXNodeMeasurements(xNodes: number[], containerHeight: numbe
     });
 }
 export function renderAerialOpening(opening: Opening, zoom: number, y: number = 50) {
-    const openingWidth = opening.type === 'rectangle' ? opening.width * zoom : opening.radius * 2 * zoom;
-    const openingX = opening.type === 'rectangle' ? opening.x * zoom : (opening.x - opening.radius) * zoom;
+    const openingWidth = opening.shape === 'RECTANGLE' ? opening.width * zoom : opening.radius * 2 * zoom;
+    const openingX = opening.shape === 'RECTANGLE' ? opening.x * zoom : (opening.x - opening.radius) * zoom;
     return (
       <Rect
         key={opening.id}
@@ -108,10 +108,10 @@ export function renderOpening(
   setOpenings: Dispatch<SetStateAction<Opening[]>>,
   idx: number,
 ) {
-  if (opening.type === 'rectangle') {
+  if (opening.shape === 'RECTANGLE') {
     return renderRectangleOpening(opening, setOpenings, idx);
   }
-  if (opening.type === 'circle') {
+  if (opening.shape === 'CIRCLE') {
     return renderCircleOpening(opening, setOpenings, idx);
   }
   return null;
@@ -125,7 +125,7 @@ function handleDragMove(e: { target: { position: () => { x: number; y: number } 
     // Update only the dragged opening's x/y
     const updated = prev.map((o) => {
       if (o.id !== draggedId) return o;
-      if (o.type === 'rectangle') {
+      if (o.shape === 'RECTANGLE') {
         return { ...o, x, elevation: y - o.height };
       }
       return { ...o, x, elevation: y };
@@ -146,7 +146,7 @@ function handleDragMove(e: { target: { position: () => { x: number; y: number } 
 }
 
 function renderRectangleOpening(
-  opening: Extract<Opening, { type: 'rectangle' }> ,
+  opening: Extract<Opening, { shape: 'RECTANGLE' }> ,
   setOpenings: Dispatch<SetStateAction<Opening[]>>,
   idx: number,
 ) {
@@ -205,7 +205,7 @@ function renderRectangleOpening(
 }
 
 function renderCircleOpening(
-  opening: Extract<Opening, { type: 'circle' }> ,
+  opening: Extract<Opening, { shape: 'CIRCLE' }> ,
   setOpenings: Dispatch<SetStateAction<Opening[]>>,
   idx: number,
 ) {

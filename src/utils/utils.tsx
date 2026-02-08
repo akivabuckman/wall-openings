@@ -1,4 +1,3 @@
-import { nanoid } from "nanoid";
 import { Opening } from "../types";
 
 export function sortAndFromPrevious(openings: Opening[]) {
@@ -19,14 +18,10 @@ export function extractXnodes(openings: Opening[]): number[] {
     const xNodes: number[] = Array.from(
       new Set(
         openings.flatMap(opening => [
-          opening.type === 'rectangle' ? opening.x : opening.x - opening.radius,
-          opening.x + (opening.type === 'rectangle' ? opening.width : opening.radius)
+          opening.shape === 'RECTANGLE' ? opening.x : opening.x - opening.radius,
+          opening.x + (opening.shape === 'RECTANGLE' ? opening.width : opening.radius)
         ])
       )
     ).sort((a, b) => a - b);
   return xNodes;
-};
-
-export function generateWallId(): string {
-  return nanoid(8).toUpperCase();
 };

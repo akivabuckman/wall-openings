@@ -1,13 +1,21 @@
 import { Socket } from "socket.io-client";
 import { Opening } from "../types";
 
-export const registerOpeningHandlers = (socket: Socket, setOpenings: (data: Opening[]) => void) => {
-	socket.on('initialOpenings', (payload: { openings: any[] }) => {
-		if (!payload?.openings) return setOpenings([]);
-		const openings: Opening[] = payload.openings.map((o, idx) => {
+export const registerOpeningHandlers = (
+	socket: Socket, 
+	setOpenings: (data: Opening[]) => void,
+	setWallId: (wallId: string) => void
+) => {
+	socket.on('initialOpenings', (data: { type: string, payload: { wallId: string, openings: Opening[] }}) => {
+		// Set wallId via callback
+		if (data?.payload?.wallId) {
+			setWallId(data.payload.wallId);
+		}
+		if (!data?.payload?.openings) return setOpenings([]);
+		const openings: Opening[] = data.payload.openings.map((o, idx) => {
 			if (o.shape === 'RECTANGLE') {
 				return {
-					type: 'rectangle',
+					shape: 'RECTANGLE',
 					width: o.width,
 					height: o.height,
 					x: o.x,
@@ -19,7 +27,7 @@ export const registerOpeningHandlers = (socket: Socket, setOpenings: (data: Open
 				};
 			} else if (o.shape === 'CIRCLE') {
 				return {
-					type: 'circle',
+					shape: 'CIRCLE',
 					radius: o.radius,
 					x: o.x,
 					elevation: o.elevation,

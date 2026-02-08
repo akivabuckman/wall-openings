@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { Stage, Layer, Line, Rect } from "react-konva";
 import { Opening } from "../types";
 import { maxDimension, verticalMeasureWidth } from "../constants";
-import { renderAerialOpening, renderXNodeMeasurements } from "../utils/renderUtils";
+import { renderAerialOpening, renderOpeningMeasurements } from "../utils/renderUtils";
 import { extractXnodes } from "../utils/utils";
 
 const AerialView = ({ openings, zoom = 1, stageX = 0 }: { openings: Opening[], zoom?: number, stageX?: number }) => {
@@ -43,7 +43,7 @@ const AerialView = ({ openings, zoom = 1, stageX = 0 }: { openings: Opening[], z
             <Line points={[0, 50, maxDimension, 50]} stroke="#222" strokeWidth={2} />
             <Line points={[0, 80, maxDimension, 80]} stroke="#222" strokeWidth={2} />
             {openings.map(opening => renderAerialOpening(opening, zoom, 50))}
-            {renderXNodeMeasurements(xNodes, containerSize.height)}
+            {renderOpeningMeasurements(openings, containerSize.height, 20)}
           </Layer>
         </Stage>
       </div>
