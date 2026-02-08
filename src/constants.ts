@@ -20,3 +20,4 @@ export const colorOptions: { name: string; value: string }[] = [
   { name: 'White', value: '#fff' },
 ];
 export const shapeMoveDebounceMs = 300;
+export const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";

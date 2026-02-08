@@ -1,11 +1,28 @@
-import getSocket from "./socket";
+import getSocket, { emitWallJoin } from "./socket";
 import { registerOpeningHandlers } from "../socketHandlers/openings";
 import { registerWallHandlers } from "../socketHandlers/walls";
 import { Opening } from "../types";
 
-export function initializeSocketManager(setOpenings: (data: Opening[]) => void) {
+interface SocketCallbacks {
+  setOpenings: (data: Opening[]) => void;
+  setWallId: (wallId: string) => void;
+  onConnect?: (wallId: string | null) => void;
+}
+
+export function initializeSocket(callbacks: SocketCallbacks, wallIdParam: string | null) {
 	const socket = getSocket();
-    registerOpeningHandlers(socket, setOpenings);
+	
+	// Register all event handlers
+    registerOpeningHandlers(socket, callbacks.setOpenings, callbacks.setWallId);
 	registerWallHandlers(socket);
+	
+	// Handle connection
+	socket.on('connect', () => {
+		emitWallJoin(wallIdParam);
+		if (callbacks.onConnect) {
+			callbacks.onConnect(wallIdParam);
+		}
+	});
+	
 	return socket;
 }

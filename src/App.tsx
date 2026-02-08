@@ -1,19 +1,32 @@
-import { initializeSocketManager } from './utils/socketManager';
+import { initializeSocket } from './utils/socketManager';
 import "./App.css";
 import Sidebar from './components/Sidebar';
 import MainPanel from './components/MainPanel';
 import { Opening } from './types';
 import { useState, useEffect, useRef } from 'react';
 import { defaultOpenings, shapeMoveDebounceMs } from './constants';
-import getSocket from './utils/socket';
-import { generateWallId } from './utils/utils';
+import { emitOpeningChange } from './utils/socket';
 
 const App = () => {
   const [openings, setOpenings] = useState<Opening[]>(defaultOpenings);
+  const [lastChangedOpening, setLastChangedOpening] = useState<Opening | null>(null);
+    // Use this function to update an opening and track the last changed opening
+    const updateOpening = (updatedOpening: Opening) => {
+      setOpenings(prev => prev.map(o => o.id === updatedOpening.id ? updatedOpening : o));
+      setLastChangedOpening(updatedOpening);
+    };
   const [hoveredOpeningId, setHoveredOpeningId] = useState<number | null>(null);
   const [showMobileModal, setShowMobileModal] = useState<boolean>(false);
-  const [wallId, setWallId] = useState<string>("");
-  const socketRef = useRef<ReturnType<typeof initializeSocketManager> | null>(null);
+  const [wallId, setWallIdState] = useState<string>("");
+  const isInitialized = useRef<boolean>(false);
+
+  // Wrapper to update both state and URL
+  const setWallId = (id: string) => {
+    setWallIdState(id);
+    const params = new URLSearchParams(window.location.search);
+    params.set('wallId', id);
+    window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+  };
 
   const handleCloseMobileModal = () => {
     setShowMobileModal(false);
@@ -32,46 +45,46 @@ const App = () => {
 
   useEffect(() => {
     // Initialize socket only once
-    if (!socketRef.current) {
-      socketRef.current = initializeSocketManager(setOpenings);
-    }
-    const socket = socketRef.current;
-    const id = new URLSearchParams(window.location.search).get('wallId') || generateWallId();
+    if (isInitialized.current) return;
+    isInitialized.current = true;
+
     const params = new URLSearchParams(window.location.search);
-    params.set('wallId', id);
-    window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
-    setWallId(id);
-    socket.on('connect', () => {
-      socket.emit('wall:join', id);
-    });
-    return () => {
-      socket.off('connect');
-    };
+    const wallIdParam = params.get('wallId') || null;
+    const wallIdIsValid = wallIdParam && !["null", ""].includes(wallIdParam);
+    
+    if (wallIdIsValid) {
+      setWallId(wallIdParam);
+    }
+
+    // Initialize socket with callbacks
+    initializeSocket({
+      setOpenings,
+      setWallId,
+    }, wallIdIsValid ? wallIdParam : null);
   }, []);
 
   const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
-    const socket = socketRef.current;
-    if (!socket) return;
+    if (!lastChangedOpening) return;
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
     debounceTimeout.current = setTimeout(() => {
-      socket.emit('openingChange', openings);
+      emitOpeningChange(lastChangedOpening);
     }, shapeMoveDebounceMs);
     return () => {
       if (debounceTimeout.current) {
         clearTimeout(debounceTimeout.current);
       }
     };
-  }, [openings]);
+  }, [lastChangedOpening]);
 
   return (
     <>
       {/* {showMobileModal && <MobileModal onClose={handleCloseMobileModal} />} */}
       <div className="flex h-screen bg-zinc-950 dark">
-        <Sidebar wallId={wallId} openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} />
-        <MainPanel openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} setHoveredOpeningId={setHoveredOpeningId} />
+        <Sidebar wallId={wallId} openings={openings} hoveredOpeningId={hoveredOpeningId} updateOpening={updateOpening} />
+        <MainPanel openings={openings} hoveredOpeningId={hoveredOpeningId} setHoveredOpeningId={setHoveredOpeningId} updateOpening={updateOpening} />
       </div>
     </>
   );

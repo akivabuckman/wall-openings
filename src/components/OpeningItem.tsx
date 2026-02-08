@@ -17,14 +17,14 @@ interface OpeningItemProps {
 }
 
 const openingInputs = {
-  rectangle: [
+  RECTANGLE: [
     { key: 'x', label: 'X:', min: 0 },
     { key: 'y', label: 'Y:' },
     { key: 'width', label: 'Width:', min: 1 },
     { key: 'height', label: 'Height:', min: 1 },
     { key: 'fromPrevious', label: 'From Previous:' },
   ],
-  circle: [
+  CIRCLE: [
     { key: 'x', label: 'X:', min: 0 },
     { key: 'y', label: 'Y:' },
     { key: 'radius', label: 'Radius:', min: 1 },
@@ -34,7 +34,7 @@ const openingInputs = {
 
 const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenings, onDelete, isShapeHovered }: OpeningItemProps) => {
   const [showModal, setShowModal] = useState(false);
-  const typeIcon = opening.type === 'rectangle'
+  const typeIcon = opening.shape === 'RECTANGLE'
     ? <Square className="w-5 h-5" strokeWidth={2.2} style={{ color: opening.color }} />
     : <LucideCircle className="w-5 h-5" strokeWidth={2.2} style={{ color: opening.color }} />;
 
@@ -47,21 +47,21 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
   };
 
   const handleShapeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newType = e.target.value as "rectangle" | "circle";
+    const newType = e.target.value as "RECTANGLE" | "CIRCLE";
     setOpenings(prev =>
       prev.map((o, i) => {
         if (i !== openingIdx) return o;
         const { x, elevation, color, id, fromPrevious, xIndex } = o;
-        if (newType === "rectangle") {
+        if (newType === "RECTANGLE") {
           return {
-            type: "rectangle",
+            shape: "RECTANGLE",
             x, elevation, color, id, fromPrevious, xIndex,
             width: "width" in o ? o.width : 50,
             height: "height" in o ? o.height : 50,
           };
         } else {
           return {
-            type: "circle",
+            shape: "CIRCLE",
             x, elevation, color, id, fromPrevious, xIndex,
             radius: "radius" in o ? o.radius : 25,
           };
@@ -87,7 +87,7 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
           </span>
           <span className="flex items-center gap-2 font-semibold">
             {typeIcon}
-            <span className="capitalize tracking-wide">{opening.type}</span>
+            <span className="capitalize tracking-wide">{opening.shape.toLowerCase()}</span>
           </span>
           <span className="ml-auto text-xs text-zinc-400 font-mono">#{openingIdx}</span>
         </button>
@@ -115,14 +115,14 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
               <select
                 id={`shape-select-${openingIdx}`}
                 className="w-36 h-8 rounded-md border border-zinc-600 bg-zinc-900 px-2 py-1 text-base text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 shadow-sm"
-                value={opening.type}
+                value={opening.shape}
                 onChange={handleShapeChange}
               >
-                <option value="rectangle">Rectangle</option>
-                <option value="circle">Circle</option>
+                <option value="RECTANGLE">Rectangle</option>
+                <option value="CIRCLE">Circle</option>
               </select>
             </div>
-          {openingInputs[opening.type].map(input => (
+          {openingInputs[opening.shape].map(input => (
             <NumberInput
               key={input.key}
               label={input.label}

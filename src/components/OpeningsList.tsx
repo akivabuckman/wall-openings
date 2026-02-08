@@ -21,7 +21,7 @@ const OpeningsList = ({ openings, setOpenings, hoveredOpeningId }: OpeningsListP
       ...prev,
       {
         id: prev.length > 0 ? Math.max(...prev.map(o => o.id)) + 1 : 1,
-        type: 'rectangle',
+        shape: 'RECTANGLE',
         x: 0,
         elevation: 0,
         width: 50,

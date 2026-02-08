@@ -8,13 +8,13 @@ interface OpeningBase {
 }
 
 export interface RectangleOpening extends OpeningBase {
-  type: 'rectangle';
+  shape: 'RECTANGLE';
   width: number;
   height: number;
 }
 
 export interface CircleOpening extends OpeningBase {
-  type: 'circle';
+  shape: 'CIRCLE';
   radius: number;
 }
 

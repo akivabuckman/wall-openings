@@ -1,13 +1,29 @@
 import { io, Socket } from "socket.io-client";
+import { Opening } from "../types";
+import { SOCKET_URL } from "../constants";
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
+// Singleton socket instance
+let socketInstance: Socket | null = null;
 
 export const getSocket = (): Socket => {
-    const socket = io(SOCKET_URL, {
+  if (!socketInstance) {
+    socketInstance = io(SOCKET_URL, {
       autoConnect: true,
       transports: ["websocket"],
     });
-  return socket;
+  }
+  return socketInstance;
+};
+
+// Utility functions for emitting events
+export const emitWallJoin = (wallId: string | null) => {
+  const socket = getSocket();
+  socket.emit('wall:join', wallId);
+};
+
+export const emitOpeningChange = (opening: Opening) => {
+  const socket = getSocket();
+  socket.emit('openingChange', opening);
 };
 
 export default getSocket;
