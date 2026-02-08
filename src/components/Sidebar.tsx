@@ -8,10 +8,10 @@ interface SidebarProps {
   wallId: string;
   openings: Opening[];
   hoveredOpeningId: number | null;
-  updateOpening: (opening: Opening) => void;
+  setOpenings: Dispatch<SetStateAction<Opening[]>>;
 }
 
-const Sidebar = ({ wallId, openings, hoveredOpeningId, updateOpening }: SidebarProps) => {
+const Sidebar = ({ wallId, openings, hoveredOpeningId, setOpenings }: SidebarProps) => {
   const [copied, setCopied] = useState<boolean>(false);
   const handleCopyWallId = () => {
     navigator.clipboard.writeText(wallId);
@@ -36,7 +36,7 @@ const Sidebar = ({ wallId, openings, hoveredOpeningId, updateOpening }: SidebarP
           {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-zinc-400" />}
         </button>
       </div>
-      <OpeningsList openings={openings} updateOpening={updateOpening} hoveredOpeningId={hoveredOpeningId} />
+      <OpeningsList openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} />
     </aside>
   );
 };

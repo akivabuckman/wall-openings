@@ -8,10 +8,10 @@ interface MainPanelProps {
   openings: Opening[];
   hoveredOpeningId?: number | null;
   setHoveredOpeningId?: (id: number | null) => void;
-  updateOpening: (opening: Opening) => void;
+  setOpenings: Dispatch<SetStateAction<Opening[]>>;
 }
 
-const MainPanel = ({ openings, hoveredOpeningId, setHoveredOpeningId, updateOpening }: MainPanelProps) => {
+const MainPanel = ({ openings, hoveredOpeningId, setHoveredOpeningId, setOpenings }: MainPanelProps) => {
   const [zoom, setZoom] = useState(1);
   const [stagePos, setStagePos] = useState<{ x: number; y: number }>({ x: 0, y: 600 });
 
@@ -29,7 +29,7 @@ const MainPanel = ({ openings, hoveredOpeningId, setHoveredOpeningId, updateOpen
       <div className="flex-3 flex flex-col min-h-0" style={{ flex: 3, minHeight: 0 }}>
         <CrossSectionView 
           openings={openings} 
-          updateOpening={updateOpening}
+          setOpenings={setOpenings}
           zoom={zoom} 
           stagePos={stagePos}
           setStagePos={setStagePos}
