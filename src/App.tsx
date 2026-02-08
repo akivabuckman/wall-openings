@@ -83,8 +83,8 @@ const App = () => {
     <>
       {/* {showMobileModal && <MobileModal onClose={handleCloseMobileModal} />} */}
       <div className="flex h-screen bg-zinc-950 dark">
-        <Sidebar wallId={wallId} openings={openings} hoveredOpeningId={hoveredOpeningId} updateOpening={updateOpening} />
-        <MainPanel openings={openings} hoveredOpeningId={hoveredOpeningId} setHoveredOpeningId={setHoveredOpeningId} updateOpening={updateOpening} />
+        <Sidebar wallId={wallId} openings={openings} hoveredOpeningId={hoveredOpeningId} setOpenings={setOpenings} />
+        <MainPanel openings={openings} hoveredOpeningId={hoveredOpeningId} setHoveredOpeningId={setHoveredOpeningId} setOpenings={setOpenings} />
       </div>
     </>
   );
