@@ -25,3 +25,38 @@ export function extractXnodes(openings: Opening[]): number[] {
     ).sort((a, b) => a - b);
   return xNodes;
 };
+
+export function getWallIdFromUrl(): string | null {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('wallId');
+}
+
+export function isValidWallId(wallId: string | null): boolean {
+  return wallId !== null && wallId !== "" && wallId !== "null";
+}
+
+export function updateWallIdInUrl(wallId: string): void {
+  const params = new URLSearchParams(window.location.search);
+  params.set('wallId', wallId);
+  window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+};
+
+export function getChangedOpening(prevOpenings: Opening[], openings: Opening[]): Opening | null {
+  if (openings.length !== prevOpenings.length) return null;
+  console.log(prevOpenings, openings)
+  const prevMap = new Map(prevOpenings.map(o => [o.id, o]));
+  for (const curr of openings) {
+    const prev = prevMap.get(curr.id);
+    if (!prev) continue;
+    const coreChanged =
+      prev.x !== curr.x ||
+      prev.elevation !== curr.elevation ||
+      prev.color !== curr.color ||
+      (prev.shape === 'RECTANGLE' && curr.shape === 'RECTANGLE' &&
+        (prev.width !== curr.width || prev.height !== curr.height)) ||
+      (prev.shape === 'CIRCLE' && curr.shape === 'CIRCLE' &&
+        prev.radius !== curr.radius);
+    if (coreChanged) return curr;
+  }
+  return null;
+}

@@ -1,13 +1,13 @@
+import { Dispatch, SetStateAction } from "react";
 import { Socket } from "socket.io-client";
 import { Opening } from "../types";
 
 export const registerOpeningHandlers = (
 	socket: Socket, 
-	setOpenings: (data: Opening[]) => void,
+	setOpenings: Dispatch<SetStateAction<Opening[]>>,
 	setWallId: (wallId: string) => void
 ) => {
 	socket.on('initialOpenings', (data: { type: string, payload: { wallId: string, openings: Opening[] }}) => {
-		// Set wallId via callback
 		if (data?.payload?.wallId) {
 			setWallId(data.payload.wallId);
 		}
@@ -22,7 +22,7 @@ export const registerOpeningHandlers = (
 					elevation: o.elevation,
 					color: o.color,
 					fromPrevious: o.fromPrevious,
-					id: idx,
+					id: o.id,
 					xIndex: idx,
 				};
 			} else if (o.shape === 'CIRCLE') {
@@ -33,7 +33,7 @@ export const registerOpeningHandlers = (
 					elevation: o.elevation,
 					color: o.color,
 					fromPrevious: o.fromPrevious,
-					id: idx,
+					id: o.id,
 					xIndex: idx,
 				};
 			}
@@ -41,4 +41,15 @@ export const registerOpeningHandlers = (
 		}).filter(Boolean) as Opening[];
 		setOpenings(openings);
 	});
-}
+
+	socket.on('dbUpdated', (data: { type: string, payload: Opening}) => {
+		const updatedOpening = data.payload;
+        setOpenings((prev: Opening[]) => {
+            const idx = prev.findIndex(o => o.id === updatedOpening.id);
+            if (idx === -1) return prev;
+            const openings = [...prev];
+            openings[idx] = updatedOpening;
+            return openings;
+        });
+	});
+};

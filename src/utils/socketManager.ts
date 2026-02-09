@@ -1,12 +1,14 @@
 import getSocket, { emitWallJoin } from "./socket";
 import { registerOpeningHandlers } from "../socketHandlers/openings";
 import { registerWallHandlers } from "../socketHandlers/walls";
+
+import { Dispatch, SetStateAction } from "react";
 import { Opening } from "../types";
 
 interface SocketCallbacks {
-  setOpenings: (data: Opening[]) => void;
-  setWallId: (wallId: string) => void;
-  onConnect?: (wallId: string | null) => void;
+	setOpenings: Dispatch<SetStateAction<Opening[]>>;
+	setWallId: (wallId: string) => void;
+	onConnect?: (wallId: string | null) => void;
 }
 
 export function initializeSocket(callbacks: SocketCallbacks, wallIdParam: string | null) {
