@@ -18,12 +18,15 @@ export const getSocket = (): Socket => {
 // Utility functions for emitting events
 export const emitWallJoin = (wallId: string | null) => {
   const socket = getSocket();
-  socket.emit('wall:join', wallId);
+  socket.emit('wallJoin', {wallId, source: "client"});
 };
 
-export const emitOpeningChange = (opening: Opening) => {
+export const emitOpeningChange = (opening: Opening, wallId: string) => {
+  const { xIndex, ...formattedOpening } = opening;
+  formattedOpening.wallId = wallId;
   const socket = getSocket();
-  socket.emit('openingChange', opening);
+  console.log(opening)
+  socket.emit('openingChange', {opening: formattedOpening, source: "client"});
 };
 
 export default getSocket;

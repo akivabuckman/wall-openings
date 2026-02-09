@@ -5,6 +5,7 @@ interface OpeningBase {
   id: number;
   fromPrevious: number;
   xIndex: number;
+  wallId?: string;
 }
 
 export interface RectangleOpening extends OpeningBase {

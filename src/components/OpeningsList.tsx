@@ -20,7 +20,7 @@ const OpeningsList = ({ openings, setOpenings, hoveredOpeningId }: OpeningsListP
     setOpenings(prev => [
       ...prev,
       {
-        id: prev.length > 0 ? Math.max(...prev.map(o => o.id)) + 1 : 1,
+        id: prev.length > 0 ? Math.max(...prev.map(o => o.id)) + 1 : 1, // TODO get uuid from backend
         shape: 'RECTANGLE',
         x: 0,
         elevation: 0,
