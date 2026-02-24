@@ -4,7 +4,7 @@ import { Opening } from "../types";
 import { Dispatch, SetStateAction } from "react";
 
 // Render measurements for each opening index (between openings)
-export function renderOpeningMeasurements(openings: Opening[], containerHeight: number) {
+export function renderOpeningMeasurements(openings: Opening[], containerHeight: number, y?: number) {
   return [...openings]
     .sort((a, b) => a.x - b.x || a.id - b.id)
     .map((opening, i, arr) => {
@@ -15,7 +15,7 @@ export function renderOpeningMeasurements(openings: Opening[], containerHeight: 
           key={opening.id}
           startX={prev.x}
           endX={opening.x}
-          y={containerHeight / 2 - 10}
+          y={y ?? containerHeight / 2 - 10}
         />
       );
     });

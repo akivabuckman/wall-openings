@@ -31,7 +31,6 @@ const MeasurementBar = ({ localZoom, openings, stageX = 0 }: { localZoom: number
       <Stage
         width={containerSize.width}
         height={containerSize.height}
-        className="rounded shadow"
         scaleX={localZoom}
         scaleY={localZoom}
         x={Math.min(verticalMeasureWidth, stageX + verticalMeasureWidth)}
