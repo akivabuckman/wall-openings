@@ -11,7 +11,7 @@ const MainPanel = ({ openings, setOpenings, hoveredOpeningId, setHoveredOpeningI
   setHoveredOpeningId?: (id: number | null) => void
 }) => {
   const [zoom, setZoom] = useState(1);
-  const [stagePos, setStagePos] = useState<{ x: number; y: number }>({ x: 0, y: 600 });
+  const [stagePos, setStagePos] = useState<{ x: number; y: number }>({ x: 0, y: 450 });
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
     // e.preventDefault();
@@ -24,7 +24,7 @@ const MainPanel = ({ openings, setOpenings, hoveredOpeningId, setHoveredOpeningI
 
   return (
     <main className="flex flex-col flex-1 h-full min-h-0" onWheel={handleWheel} tabIndex={0} style={{ outline: "none", minHeight: 0 }}>
-      <div className="flex-3 flex flex-col min-h-0" style={{ flex: 3, minHeight: 0 }}>
+      <div className="flex-3 flex flex-col min-h-0" style={{ flex: 9, minHeight: 550 }}>
         <CrossSectionView 
           openings={openings} 
           setOpenings={setOpenings} 
@@ -34,7 +34,7 @@ const MainPanel = ({ openings, setOpenings, hoveredOpeningId, setHoveredOpeningI
           setHoveredOpeningId={setHoveredOpeningId}
         />
       </div>
-      <div className="flex-1" >
+      <div className="border-t-2 border-black" style={{ flex: 1 }}>
         <AerialView 
           openings={openings} 
           zoom={zoom} 
