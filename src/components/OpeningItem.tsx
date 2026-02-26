@@ -1,4 +1,5 @@
-import { Opening } from "../types";
+import { CircleOpening, Opening, RectangleOpening } from "../types";
+import { emitDeleteOpening, emitOpeningChange } from "../utils/socket";
 import { updateOpeningField } from "../utils/renderUtils";
 import NumberInput from "./NumberInput";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -14,6 +15,7 @@ interface OpeningItemProps {
   setOpenings: Dispatch<SetStateAction<Opening[]>>;
   onDelete: (idx: number) => void;
   isShapeHovered?: boolean;
+  wallId?: string;
 }
 
 const openingInputs = {
@@ -32,7 +34,7 @@ const openingInputs = {
   ],
 };
 
-const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenings, onDelete, isShapeHovered }: OpeningItemProps) => {
+const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenings, onDelete, isShapeHovered, wallId }: OpeningItemProps) => {
   const [showModal, setShowModal] = useState(false);
   const typeIcon = opening.shape === 'RECTANGLE'
     ? <Square className="w-5 h-5" strokeWidth={2.2} style={{ color: opening.color }} />
@@ -47,27 +49,43 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
   };
 
   const handleShapeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newType = e.target.value as "RECTANGLE" | "CIRCLE";
-    setOpenings(prev =>
-      prev.map((o, i) => {
-        if (i !== openingIdx) return o;
-        const { x, elevation, color, id, fromPrevious, xIndex } = o;
-        if (newType === "RECTANGLE") {
-          return {
-            shape: "RECTANGLE",
-            x, elevation, color, id, fromPrevious, xIndex,
-            width: "width" in o ? o.width : 50,
-            height: "height" in o ? o.height : 50,
-          };
-        } else {
-          return {
-            shape: "CIRCLE",
-            x, elevation, color, id, fromPrevious, xIndex,
-            radius: "radius" in o ? o.radius : 25,
-          };
-        }
-      })
-    );
+    const newShape = e.target.value as "RECTANGLE" | "CIRCLE";
+    let updatedOpening: Opening;
+    if (newShape === "RECTANGLE") {
+      const { x, elevation, color, id, fromPrevious, xIndex, wallId } = opening;
+      updatedOpening = {
+        shape: "RECTANGLE",
+        x,
+        elevation,
+        color,
+        id,
+        fromPrevious,
+        xIndex,
+        wallId,
+        width: "width" in opening ? opening.width : 50,
+        height: "height" in opening ? opening.height : 50,
+      };
+    } else {
+      const { x, elevation, color, id, fromPrevious, xIndex, wallId } = opening;
+      updatedOpening = {
+        shape: "CIRCLE",
+        x,
+        elevation,
+        color,
+        id,
+        fromPrevious,
+        xIndex,
+        wallId,
+        radius: 25,
+      };
+    }
+    emitOpeningChange(updatedOpening, wallId);
+  };
+
+  const handleConfirmDelete = () => {
+    setShowModal(false);
+    emitDeleteOpening(opening.id, wallId);
+    onDelete && onDelete(openingIdx);
   };
 
   return (
@@ -100,7 +118,7 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
         </button>
             <ConfirmDeleteModal
               open={showModal}
-              onConfirm={() => { setShowModal(false); onDelete && onDelete(openingIdx); }}
+              onConfirm={handleConfirmDelete}
               onCancel={() => setShowModal(false)}
             />
       </div>

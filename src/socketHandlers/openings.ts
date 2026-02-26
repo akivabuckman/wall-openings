@@ -42,7 +42,7 @@ export const registerOpeningHandlers = (
 		setOpenings(openings);
 	});
 
-	socket.on('dbUpdated', (data: { type: string, payload: Opening}) => {
+	socket.on('openingUpdated', (data: { type: string, payload: Opening}) => {
 		const updatedOpening = data.payload;
         setOpenings((prev: Opening[]) => {
             const idx = prev.findIndex(o => o.id === updatedOpening.id);
@@ -51,5 +51,15 @@ export const registerOpeningHandlers = (
             openings[idx] = updatedOpening;
             return openings;
         });
+	});
+
+	socket.on('newOpening', (data: { type: string, payload: Opening}) => {
+		const newOpening = data.payload;
+		setOpenings((prev: Opening[]) => [...prev, newOpening]);
+	});
+
+	socket.on('openingDeleted', (data: { type: string, payload: { openingId: number }}) => {
+		const { openingId } = data.payload;
+		setOpenings((prev: Opening[]) => prev.filter(o => o.id !== openingId));
 	});
 };

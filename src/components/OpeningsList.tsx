@@ -2,14 +2,16 @@ import { Opening } from "../types";
 import { Dispatch, SetStateAction, useState } from "react";
 import OpeningItem from "./OpeningItem";
 import { Plus } from "lucide-react";
+import { emitRequestNewOpening } from "../utils/socket";
 
 interface OpeningsListProps {
   openings: Opening[];
   setOpenings: Dispatch<SetStateAction<Opening[]>>;
   hoveredOpeningId: number | null;
+  wallId?: string;
 }
 
-const OpeningsList = ({ openings, setOpenings, hoveredOpeningId }: OpeningsListProps) => {
+const OpeningsList = ({ openings, setOpenings, hoveredOpeningId, wallId }: OpeningsListProps) => {
   const [collapsed, setCollapsed] = useState<boolean[]>(() => openings.map(() => false));
 
   const toggleCollapse = (idx: number) => {
@@ -17,21 +19,7 @@ const OpeningsList = ({ openings, setOpenings, hoveredOpeningId }: OpeningsListP
   };
 
   const handleAddOpening = () => {
-    setOpenings(prev => [
-      ...prev,
-      {
-        id: prev.length > 0 ? Math.max(...prev.map(o => o.id)) + 1 : 1, // TODO get uuid from backend
-        shape: 'RECTANGLE',
-        x: 0,
-        elevation: 0,
-        width: 50,
-        height: 30,
-        color: "red",
-        fromPrevious: 0,
-        xIndex: prev.length,
-      }
-    ]);
-    setCollapsed(prev => [...prev, false]);
+    emitRequestNewOpening(wallId)
   };
 
   return (
@@ -61,6 +49,7 @@ const OpeningsList = ({ openings, setOpenings, hoveredOpeningId }: OpeningsListP
               setCollapsed(prev => prev.filter((_, i) => i !== idx));
             }}
             isShapeHovered={hoveredOpeningId === opening.id}
+            wallId={wallId}
           />
         ))}
         </ul>

@@ -44,7 +44,7 @@ const Sidebar = ({ wallId, openings, hoveredOpeningId, setOpenings }: SidebarPro
           {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-zinc-400" />}
         </button>
       </div>
-      <OpeningsList openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} />
+      <OpeningsList openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} wallId={wallId} />
     </aside>
   );
 };

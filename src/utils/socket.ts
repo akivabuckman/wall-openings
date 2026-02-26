@@ -21,12 +21,34 @@ export const emitWallJoin = (wallId: string | null) => {
   socket.emit('wallJoin', {wallId, source: "client"});
 };
 
-export const emitOpeningChange = (opening: Opening, wallId: string) => {
+export const emitOpeningChange = (opening: Opening, wallId?: string) => {
+  if (!wallId) {
+    console.error("Wall ID is required to emit opening changes");
+    return;
+  }
   const { xIndex, ...formattedOpening } = opening;
   formattedOpening.wallId = wallId;
   const socket = getSocket();
   console.log(opening)
   socket.emit('openingChange', {opening: formattedOpening, source: "client"});
+};
+
+export const emitDeleteOpening = (openingId: number, wallId?: string) => {
+  if (!wallId) {
+    console.error("Wall ID is required to delete an opening");
+    return;
+  }
+  const socket = getSocket();
+  socket.emit('deleteOpening', {openingId, wallId, source: "client"});
+};
+
+export const emitRequestNewOpening = (wallId?: string) => {
+  if (!wallId) {
+    console.error("Wall ID is required to request a new opening");
+    return;
+  }
+  const socket = getSocket();
+  socket.emit('requestNewOpening', {wallId, source: "client"});
 };
 
 export default getSocket;
