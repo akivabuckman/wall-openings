@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { Socket } from "socket.io-client";
 import { Opening } from "../types";
+import { toast } from "react-toastify";
 
 export const registerOpeningHandlers = (
 	socket: Socket, 
@@ -61,5 +62,10 @@ export const registerOpeningHandlers = (
 	socket.on('openingDeleted', (data: { type: string, payload: { openingId: number }}) => {
 		const { openingId } = data.payload;
 		setOpenings((prev: Opening[]) => prev.filter(o => o.id !== openingId));
+	});
+
+	socket.on('error', (data: { type: string, payload: { message: string }}) => {
+		console.error("Socket error:", data.payload.message);
+		toast.error("kekek")
 	});
 };

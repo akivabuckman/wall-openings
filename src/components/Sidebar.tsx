@@ -23,14 +23,6 @@ const Sidebar = ({ wallId, openings, hoveredOpeningId, setOpenings }: SidebarPro
     <aside
       className="w-100 h-full bg-zinc-900 border-r border-zinc-800 flex flex-col items-center py-6 relative select-none"
     >
-      <div className="mb-4 px-4 py-2 bg-zinc-800 rounded text-zinc-300 text-sm text-center">
-        🚧 Coming soon: Backend integration!<br />
-        🌐 Users will be able to save and work collaboratively<br />
-        🚀 Just like in a Google Doc<br />
-        🖥️ (using websocket)
-      </div>
-      <p>
-      </p>
       <div className="mb-4 text-zinc-300 text-lg flex items-center gap-2"
           onClick={handleCopyWallId}
           style={{ cursor: "pointer" }}

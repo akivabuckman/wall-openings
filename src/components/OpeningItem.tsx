@@ -21,16 +21,16 @@ interface OpeningItemProps {
 const openingInputs = {
   RECTANGLE: [
     { key: 'x', label: 'X:', min: 0 },
-    { key: 'y', label: 'Y:' },
+    { key: 'elevation', label: 'Elevation:' },
     { key: 'width', label: 'Width:', min: 1 },
     { key: 'height', label: 'Height:', min: 1 },
-    { key: 'fromPrevious', label: 'From Previous:' },
+    // { key: 'fromPrevious', label: 'From Previous:' },
   ],
   CIRCLE: [
     { key: 'x', label: 'X:', min: 0 },
-    { key: 'y', label: 'Y:' },
+    { key: 'elevation', label: 'Elevation:' },
     { key: 'radius', label: 'Radius:', min: 1 },
-    { key: 'fromPrevious', label: 'From Previous:' },
+    // { key: 'fromPrevious', label: 'From Previous:' },
   ],
 };
 
