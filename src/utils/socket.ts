@@ -29,7 +29,6 @@ export const emitOpeningChange = (opening: Opening, wallId?: string) => {
   const { xIndex, ...formattedOpening } = opening;
   formattedOpening.wallId = wallId;
   const socket = getSocket();
-  console.log(opening)
   socket.emit('openingChange', {opening: formattedOpening, source: "client"});
 };
 

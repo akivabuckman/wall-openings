@@ -43,7 +43,6 @@ export function updateWallIdInUrl(wallId: string): void {
 
 export function getChangedOpening(prevOpenings: Opening[], openings: Opening[]): Opening | null {
   if (openings.length !== prevOpenings.length) return null;
-  console.log(prevOpenings, openings)
   const prevMap = new Map(prevOpenings.map(o => [o.id, o]));
   for (const curr of openings) {
     const prev = prevMap.get(curr.id);

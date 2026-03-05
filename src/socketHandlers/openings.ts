@@ -65,7 +65,6 @@ export const registerOpeningHandlers = (
 	});
 
 	socket.on('error', (data: { type: string, payload: { message: string }}) => {
-		console.error("Socket error:", data.payload.message);
-		toast.error("kekek")
+		toast.error("Something went wrong" + (data.payload.message ? `: ${data.payload.message}` : ""));
 	});
 };
