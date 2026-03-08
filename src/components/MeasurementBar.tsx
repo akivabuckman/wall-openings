@@ -27,19 +27,19 @@ const MeasurementBar = ({ localZoom, openings, stageX = 0 }: { localZoom: number
   }, []);
 
   return (
-    <div ref={containerDivRef} className="w-full border flex flex-col items-center justify-center rounded-b-lg" >
+    <div ref={containerDivRef} className="w-full bg-zinc-900 flex flex-col items-center justify-center " >
       <Stage
-        width={containerSize.width}
-        height={containerSize.height}
-        scaleX={localZoom}
-        scaleY={localZoom}
-        x={Math.min(verticalMeasureWidth, stageX + verticalMeasureWidth)}
+      width={containerSize.width}
+      height={containerSize.height}
+      scaleX={localZoom}
+      scaleY={localZoom}
+      x={Math.min(verticalMeasureWidth, stageX + verticalMeasureWidth)}
       >
-        <Layer>
-          <Rect x={0} y={0} width={maxDimension} height={containerSize.height} fill="grey" />
-          {renderOpeningMeasurements(openings, containerSize.height)}
-          {renderXNodeMeasurements(xNodes, containerSize.height)}
-        </Layer>
+      <Layer>
+        <Rect x={0} y={0} width={maxDimension} height={containerSize.height} fill="grey" />
+        {renderOpeningMeasurements(openings, containerSize.height)}
+        {renderXNodeMeasurements(xNodes, containerSize.height)}
+      </Layer>
       </Stage>
     </div>
   );

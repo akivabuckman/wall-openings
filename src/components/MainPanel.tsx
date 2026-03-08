@@ -36,7 +36,7 @@ const MainPanel = ({ openings, hoveredOpeningId, setHoveredOpeningId, setOpening
           setHoveredOpeningId={setHoveredOpeningId}
         />
       </div>
-      <div className="border-t-2 border-black" style={{ flex: 1 }}>
+      <div style={{ flex: 1 }}>
         <AerialView 
           openings={openings} 
           zoom={zoom} 

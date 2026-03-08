@@ -6,7 +6,8 @@ import { toast } from "react-toastify";
 export const registerOpeningHandlers = (
 	socket: Socket, 
 	setOpenings: Dispatch<SetStateAction<Opening[]>>,
-	setWallId: (wallId: string) => void
+	setWallId: (wallId: string) => void,
+	setSaveStatus?: (status: 'saving' | 'saved') => void
 ) => {
 	socket.on('initialOpenings', (data: { type: string, payload: { wallId: string, openings: Opening[] }}) => {
 		if (data?.payload?.wallId) {
@@ -45,6 +46,7 @@ export const registerOpeningHandlers = (
 
 	socket.on('openingUpdated', (data: { type: string, payload: Opening}) => {
 		const updatedOpening = data.payload;
+		setSaveStatus?.('saved');
         setOpenings((prev: Opening[]) => {
             const idx = prev.findIndex(o => o.id === updatedOpening.id);
             if (idx === -1) return prev;
@@ -56,15 +58,18 @@ export const registerOpeningHandlers = (
 
 	socket.on('newOpening', (data: { type: string, payload: Opening}) => {
 		const newOpening = data.payload;
+		setSaveStatus?.('saved');
 		setOpenings((prev: Opening[]) => [...prev, newOpening]);
 	});
 
 	socket.on('openingDeleted', (data: { type: string, payload: { openingId: number }}) => {
 		const { openingId } = data.payload;
+		setSaveStatus?.('saved');
 		setOpenings((prev: Opening[]) => prev.filter(o => o.id !== openingId));
 	});
 
 	socket.on('error', (data: { type: string, payload: { message: string }}) => {
+		setSaveStatus?.('saved');
 		toast.error("Something went wrong" + (data.payload.message ? `: ${data.payload.message}` : ""));
 	});
 };

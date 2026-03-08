@@ -8,6 +8,7 @@ import { Opening } from "../types";
 interface SocketCallbacks {
 	setOpenings: Dispatch<SetStateAction<Opening[]>>;
 	setWallId: (wallId: string) => void;
+	setSaveStatus?: (status: 'saving' | 'saved') => void;
 	onConnect?: (wallId: string | null) => void;
 }
 
@@ -15,7 +16,7 @@ export function initializeSocket(callbacks: SocketCallbacks, wallIdParam: string
 	const socket = getSocket();
 	
 	// Register all event handlers
-    registerOpeningHandlers(socket, callbacks.setOpenings, callbacks.setWallId);
+    registerOpeningHandlers(socket, callbacks.setOpenings, callbacks.setWallId, callbacks.setSaveStatus);
 	registerWallHandlers(socket);
 	
 	// Handle connection
