@@ -20,4 +20,4 @@ export const colorOptions: { name: string; value: string }[] = [
   { name: 'White', value: '#fff' },
 ];
 export const shapeMoveDebounceMs = 300;
-export const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "https://akivabuckman.com/wall-openings/api";
+export const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "https://akivabuckman.com/";

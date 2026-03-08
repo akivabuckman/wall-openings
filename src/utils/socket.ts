@@ -10,6 +10,7 @@ export const getSocket = (): Socket => {
     socketInstance = io(SOCKET_URL, {
       autoConnect: true,
       transports: ["websocket"],
+      path: "/wall-openings/api",
     });
   }
   return socketInstance;
