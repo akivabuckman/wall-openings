@@ -9,9 +9,11 @@ interface OpeningsListProps {
   setOpenings: Dispatch<SetStateAction<Opening[]>>;
   hoveredOpeningId: number | null;
   wallId?: string;
+  saveStatus: 'saving' | 'saved';
+  setSaveStatus: (status: 'saving' | 'saved') => void;
 }
 
-const OpeningsList = ({ openings, setOpenings, hoveredOpeningId, wallId }: OpeningsListProps) => {
+const OpeningsList = ({ openings, setOpenings, hoveredOpeningId, wallId, saveStatus, setSaveStatus }: OpeningsListProps) => {
   const [collapsed, setCollapsed] = useState<boolean[]>(() => openings.map(() => false));
 
   const toggleCollapse = (idx: number) => {
@@ -19,12 +21,13 @@ const OpeningsList = ({ openings, setOpenings, hoveredOpeningId, wallId }: Openi
   };
 
   const handleAddOpening = () => {
+    setSaveStatus('saving');
     emitRequestNewOpening(wallId)
   };
 
   return (
     <>
-      <div className="flex items-center mb-3">
+      <div className="flex items-center mb-3 gap-2">
         <button
           className="flex items-center gap-2 px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow transition"
           onClick={handleAddOpening}
@@ -33,6 +36,18 @@ const OpeningsList = ({ openings, setOpenings, hoveredOpeningId, wallId }: Openi
           <Plus className="w-4 h-4" />
           Add Opening
         </button>
+        <span
+          className={`px-3 py-1.5 rounded text-xs font-semibold shadow border ${
+            saveStatus === 'saving'
+              ? 'bg-zinc-700 border-zinc-600 text-zinc-300'
+              : 'bg-zinc-800 border-zinc-700 text-zinc-400'
+          }`}
+        >
+          {saveStatus === 'saving' ? 'Saving...' : 'Saved*'}
+        </span>
+        </div>
+        <p className="text-xs text-zinc-400 mb-2">*All changes are immediately visible to all users viewing the wall</p>
+        <div>
       </div>
       <div className="overflow-y-auto pr-1">
         <ul className="space-y-2">
@@ -50,6 +65,7 @@ const OpeningsList = ({ openings, setOpenings, hoveredOpeningId, wallId }: Openi
             }}
             isShapeHovered={hoveredOpeningId === opening.id}
             wallId={wallId}
+            setSaveStatus={setSaveStatus}
           />
         ))}
         </ul>

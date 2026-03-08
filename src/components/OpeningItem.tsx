@@ -16,6 +16,7 @@ interface OpeningItemProps {
   onDelete: (idx: number) => void;
   isShapeHovered?: boolean;
   wallId?: string;
+  setSaveStatus?: (status: 'saving' | 'saved') => void;
 }
 
 const openingInputs = {
@@ -34,7 +35,7 @@ const openingInputs = {
   ],
 };
 
-const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenings, onDelete, isShapeHovered, wallId }: OpeningItemProps) => {
+const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenings, onDelete, isShapeHovered, wallId, setSaveStatus }: OpeningItemProps) => {
   const [showModal, setShowModal] = useState(false);
   const typeIcon = opening.shape === 'RECTANGLE'
     ? <Square className="w-5 h-5" strokeWidth={2.2} style={{ color: opening.color }} />
@@ -80,10 +81,12 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
       };
     }
     emitOpeningChange(updatedOpening, wallId);
+    setSaveStatus?.('saving');
   };
 
   const handleConfirmDelete = () => {
     setShowModal(false);
+    setSaveStatus?.('saving');
     emitDeleteOpening(opening.id, wallId);
     onDelete && onDelete(openingIdx);
   };

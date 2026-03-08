@@ -13,6 +13,7 @@ const WallEditor = () => {
   const [hoveredOpeningId, setHoveredOpeningId] = useState<number | null>(null);
   const [openingsLoading, setOpeningsLoading] = useState<boolean>(false);
   const [wallId, setWallIdState] = useState<string>("");
+  const [saveStatus, setSaveStatus] = useState<'saving' | 'saved'>('saved');
   const isInitialized = useRef<boolean>(false);
   const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -46,12 +47,14 @@ const WallEditor = () => {
     initializeSocket({
       setOpenings,
       setWallId,
+      setSaveStatus,
     }, wallIdValid ? wallIdParam : null);
   }, []);
 
   // Debounce and emit only the last changed opening
   useEffect(() => {
     if (!lastChangedOpening) return;
+    setSaveStatus('saving');
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
@@ -74,6 +77,8 @@ const WallEditor = () => {
         openings={openings} 
         hoveredOpeningId={hoveredOpeningId} 
         setOpenings={setOpenings}
+        saveStatus={saveStatus}
+        setSaveStatus={setSaveStatus}
       />
       <MainPanel 
         openings={openings} 
@@ -81,6 +86,9 @@ const WallEditor = () => {
         setHoveredOpeningId={setHoveredOpeningId} 
         setOpenings={setOpenings} 
       />
+      <footer className="fixed bottom-0 left-0 right-0 text-center text-zinc-200 text-xs py-2 px-4 bg-gradient-to-r from-blue-900 via-orange-900 to-blue-900 border-t border-zinc-600 select-none pointer-events-none tracking-wide">
+        ✨ Everything here was made by yours truly — 🖥️ frontend, ⚙️ backend, 🔌 websocket, 🚀 CI, and ☁️ AWS. ✨
+      </footer>
     </div>
   );
 };

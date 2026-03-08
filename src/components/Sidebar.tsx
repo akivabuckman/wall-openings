@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { Opening } from "../types";
 import OpeningsList from "./OpeningsList";
-import { Copy, Check } from "lucide-react";
+import { Share, Check } from "lucide-react";
 
 
 interface SidebarProps {
@@ -9,12 +9,14 @@ interface SidebarProps {
   openings: Opening[];
   hoveredOpeningId: number | null;
   setOpenings: Dispatch<SetStateAction<Opening[]>>;
+  saveStatus: 'saving' | 'saved';
+  setSaveStatus: (status: 'saving' | 'saved') => void;
 }
 
-const Sidebar = ({ wallId, openings, hoveredOpeningId, setOpenings }: SidebarProps) => {
+const Sidebar = ({ wallId, openings, hoveredOpeningId, setOpenings, saveStatus, setSaveStatus }: SidebarProps) => {
   const [copied, setCopied] = useState<boolean>(false);
   const handleCopyWallId = () => {
-    navigator.clipboard.writeText(wallId);
+    navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     setTimeout(() => setCopied(false), 500);
   };
@@ -30,13 +32,13 @@ const Sidebar = ({ wallId, openings, hoveredOpeningId, setOpenings }: SidebarPro
         Wall ID: <span className="font-bold">{wallId}</span>
         <button
           className="ml-2 p-1 rounded hover:bg-zinc-800 transition-colors"
-          title={copied ? "Copied!" : "Copy Wall ID"}
+          title={copied ? "Copied!" : "Share wall link"}
           style={{ cursor: "pointer" }}
         >
-          {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-zinc-400" />}
+          {copied ? <Check className="w-4 h-4 text-green-400" /> : <Share className="w-4 h-4 text-zinc-400" />}
         </button>
       </div>
-      <OpeningsList openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} wallId={wallId} />
+      <OpeningsList openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} wallId={wallId} saveStatus={saveStatus} setSaveStatus={setSaveStatus} />
     </aside>
   );
 };

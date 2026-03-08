@@ -69,7 +69,7 @@ const CrossSectionView = ({ openings, setOpenings, zoom = 1, stagePos, setStageP
   return (
     <section className="flex-1 min-h-0 rounded-t-lg shadow-inner flex flex-col items-center justify-center">
       <div className="w-full flex-1 flex flex-col">
-        <div className="w-full flex-1 flex flex-row relative">
+        <div className="w-full flex-1 flex flex-row relative  border-b-4 border-black">
           <div className="absolute left-0 top-0 h-full" >
             <VerticalMeasurementBar localZoom={localZoom} openings={openings} stageY={stagePos.y} />
           </div>
