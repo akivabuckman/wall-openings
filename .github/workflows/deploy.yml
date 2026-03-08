@@ -36,16 +36,16 @@ jobs:
         run: |
           docker build \
             --build-arg GIT_SHA=$GIT_SHA \
-            -t wall-openings-integrated:$GIT_SHA .
+            -t wall-openings:$GIT_SHA .
 
       - name: Tag Docker image for ECR
         run: |
-          docker tag wall-openings-integrated:$GIT_SHA \
-            ${{ vars.ECR_REGISTRY }}/wall-openings-integrated:$GIT_SHA
+          docker tag wall-openings:$GIT_SHA \
+            ${{ vars.ECR_REGISTRY }}/wall-openings:$GIT_SHA
 
       - name: Push Docker image to ECR
         run: |
-          docker push ${{ vars.ECR_REGISTRY }}/wall-openings-integrated:$GIT_SHA
+          docker push ${{ vars.ECR_REGISTRY }}/wall-openings:$GIT_SHA
 
       - name: Deploy container on EC2
         uses: appleboy/ssh-action@v0.1.9
@@ -58,11 +58,11 @@ jobs:
               docker login --username AWS --password-stdin \
               ${{ vars.ECR_REGISTRY }}
 
-            docker pull ${{ vars.ECR_REGISTRY }}/wall-openings-integrated:${{ env.GIT_SHA }}
-            docker stop wall-openings-integrated || true
-            docker rm wall-openings-integrated || true
+            docker pull ${{ vars.ECR_REGISTRY }}/wall-openings:${{ env.GIT_SHA }}
+            docker stop wall-openings || true
+            docker rm wall-openings || true
             docker run -d \
-              --name wall-openings-integrated \
+              --name wall-openings \
               --network web \
-              -p 127.0.0.1:5176:5176 \
-              ${{ vars.ECR_REGISTRY }}/wall-openings-integrated:${{ env.GIT_SHA }}
+              -p 127.0.0.1:5175:5175 \
+              ${{ vars.ECR_REGISTRY }}/wall-openings:${{ env.GIT_SHA }}
