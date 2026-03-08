@@ -17,6 +17,6 @@ export default defineConfig(({ mode }) => {
       react(),
       tailwindcss(),
     ],
-    base: isProduction  ? '/wall-openings' : '/'
+    base: isProduction  ? '/wall-openings-integrated' : '/'
   }
 });
