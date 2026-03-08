@@ -1,20 +1,22 @@
-import { useRef, useEffect, useState, SetStateAction, Dispatch } from "react";
+import { useRef, useEffect, useState } from "react";
 import type { KonvaEventObject } from 'konva/lib/Node';
-import { Stage, Layer, Rect, Line } from "react-konva";
+import { Stage, Layer, Rect, Line, Group } from "react-konva";
 import MeasurementBar from "./MeasurementBar";
 import VerticalMeasurementBar from "./VerticalMeasurementBar";
 import { Opening } from "../types";
 import { renderOpening } from "../utils/renderUtils.tsx";
 import { maxDimension } from "../constants.ts";
 
-const CrossSectionView = ({ openings, setOpenings, zoom = 1, stagePos, setStagePos, setHoveredOpeningId }: {
-  openings: Opening[],
-  setOpenings: Dispatch<SetStateAction<Opening[]>>,
-  zoom?: number,
-  stagePos: { x: number; y: number },
-  setStagePos: (pos: { x: number; y: number }) => void,
-  setHoveredOpeningId?: (id: number | null) => void
-}) => {
+interface CrossSectionViewProps {
+  openings: Opening[];
+  setOpenings: React.Dispatch<React.SetStateAction<Opening[]>>;
+  zoom?: number;
+  stagePos: { x: number; y: number };
+  setStagePos: (pos: { x: number; y: number }) => void;
+  setHoveredOpeningId?: (id: number | null) => void;
+}
+
+const CrossSectionView = ({ openings, setOpenings, zoom = 1, stagePos, setStagePos, setHoveredOpeningId }: CrossSectionViewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<{ width: number; height: number }>({ width: 400, height: 200 });
   const onEnter = (opening: Opening) => setHoveredOpeningId && setHoveredOpeningId(opening.id);
@@ -97,9 +99,9 @@ const CrossSectionView = ({ openings, setOpenings, zoom = 1, stagePos, setStageP
                 <Layer scaleY={-1}>
                   <Rect  x={0} y={-maxDimension / 100} width={maxDimension} height={maxDimension} fill="gray"/>
                   {openings.map((opening, idx) => (
-                      <g key={opening.id} onMouseEnter={() => onEnter(opening)} onMouseLeave={onLeave}>
+                      <Group key={opening.id} onMouseEnter={() => onEnter(opening)} onMouseLeave={onLeave}>
                         {renderOpening(opening, setOpenings, idx)}
-                      </g>
+                      </Group>
                   ))}
                   <Line
                     points={[0, 0, maxDimension, 0]}

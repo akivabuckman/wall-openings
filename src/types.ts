@@ -1,20 +1,21 @@
 interface OpeningBase {
   x: number;
-  y: number;
+  elevation: number;
   color: string;
   id: number;
   fromPrevious: number;
   xIndex: number;
+  wallId?: string;
 }
 
 export interface RectangleOpening extends OpeningBase {
-  type: 'rectangle';
+  shape: 'RECTANGLE';
   width: number;
   height: number;
 }
 
 export interface CircleOpening extends OpeningBase {
-  type: 'circle';
+  shape: 'CIRCLE';
   radius: number;
 }
 

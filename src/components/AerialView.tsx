@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { Stage, Layer, Line, Rect } from "react-konva";
 import { Opening } from "../types";
 import { maxDimension, verticalMeasureWidth } from "../constants";
-import { renderAerialOpening, renderOpeningMeasurements, renderXNodeMeasurements } from "../utils/renderUtils";
+import { renderAerialOpening, renderOpeningMeasurements } from "../utils/renderUtils";
 import { extractXnodes } from "../utils/utils";
 
 const AerialView = ({ openings, zoom = 1, stageX = 0 }: { openings: Opening[], zoom?: number, stageX?: number }) => {
