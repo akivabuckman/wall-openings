@@ -69,7 +69,7 @@ const OpeningsList = ({ openings, setOpenings, hoveredOpeningId, wallId, saveSta
         </span>
         </div>
         <p className="text-xs text-zinc-400 mb-2">{
-          saveStatus === 'error' ? '*Wall failed to save, but you can still edit it without saving' : 'All changes are immediately visible to all users viewing the wall'
+          saveStatus === 'error' ? '*Wall failed to save, but you can still edit it without saving' : '*All changes are immediately visible to all users viewing the wall'
         }</p>
         <div>
       </div>
