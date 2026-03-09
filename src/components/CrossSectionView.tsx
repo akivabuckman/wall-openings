@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import type { KonvaEventObject } from 'konva/lib/Node';
-import { Stage, Layer, Rect, Line, Group } from "react-konva";
+import { Stage, Layer, Rect, Line, Group, Text } from "react-konva";
 import MeasurementBar from "./MeasurementBar";
 import VerticalMeasurementBar from "./VerticalMeasurementBar";
 import { Opening } from "../types";
@@ -73,7 +73,6 @@ const CrossSectionView = ({ openings, setOpenings, zoom = 1, stagePos, setStageP
           <div className="absolute left-0 top-0 h-full" >
             <VerticalMeasurementBar localZoom={localZoom} openings={openings} stageY={stagePos.y} />
           </div>
-          {/* <div className="flex-1 flex items-center justify-center" > */}
             <div ref={containerRef} className="w-full h-full flex items-center justify-center ml-24">
               <Stage
                 width={size.width}
@@ -108,10 +107,17 @@ const CrossSectionView = ({ openings, setOpenings, zoom = 1, stagePos, setStageP
                     stroke="black"
                     strokeWidth={1}
                   />
+                  <Text
+                    text="Elevation = 0"
+                    x={8}
+                    y={14}
+                    fontSize={12}
+                    fill="black"
+                    scaleY={-1}
+                  />
                 </Layer>
               </Stage>
             </div>
-          {/* </div> */}
         </div>
         <MeasurementBar localZoom={localZoom} openings={openings} stageX={stagePos.x} />
       </div>

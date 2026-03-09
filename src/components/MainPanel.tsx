@@ -26,7 +26,7 @@ const MainPanel = ({ openings, hoveredOpeningId, setHoveredOpeningId, setOpening
 
   return (
     <main className="flex flex-col flex-1 h-full min-h-0" onWheel={handleWheel} tabIndex={0} style={{ outline: "none", minHeight: 0 }}>
-      <div className="flex-3 flex flex-col min-h-0" style={{ flex: 9, minHeight: 550 }}>
+      <div className="flex-3 flex flex-col min-h-0" style={{ flex: 7, minHeight: 450 }}>
         <CrossSectionView 
           openings={openings} 
           setOpenings={setOpenings}

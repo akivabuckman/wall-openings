@@ -22,7 +22,7 @@ export function renderOpeningMeasurements(openings: Opening[], containerHeight: 
 }
 
 // Render measurements for xNodes below the existing bar
-export function renderXNodeMeasurements(xNodes: number[], containerHeight: number) {
+export function renderXNodeMeasurements(xNodes: number[], containerHeight: number, px?: number) {
   return xNodes
     .slice()
     .sort((a, b) => a - b)
@@ -33,7 +33,7 @@ export function renderXNodeMeasurements(xNodes: number[], containerHeight: numbe
           key={"xnode-" + i}
           startX={arr[i - 1]}
           endX={x}
-          y={containerHeight / 2 + 18}
+          y={containerHeight / 2 + 18 + (px ?? 0)}
         />
       );
     });

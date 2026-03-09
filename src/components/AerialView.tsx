@@ -3,15 +3,13 @@ import { Stage, Layer, Line, Rect } from "react-konva";
 import { Opening } from "../types";
 import { maxDimension, verticalMeasureWidth } from "../constants";
 import { renderAerialOpening, renderOpeningMeasurements } from "../utils/renderUtils";
-import { extractXnodes } from "../utils/utils";
 
 const AerialView = ({ openings, zoom = 1, stageX = 0 }: { openings: Opening[], zoom?: number, stageX?: number }) => {
   const [containerSize, setContainerSize] = useState<{ width: number; height: number }>({
     width: 400,
-    height: 200,
+    height: 160,
   });
   const containerDivRef = useRef<HTMLDivElement>(null);
-  const xNodes: number[] = extractXnodes(openings);
 
   useEffect(() => {
     function updateContainerSize() {
@@ -43,7 +41,7 @@ const AerialView = ({ openings, zoom = 1, stageX = 0 }: { openings: Opening[], z
             <Line points={[0, 50, maxDimension, 50]} stroke="#222" strokeWidth={2} />
             <Line points={[0, 80, maxDimension, 80]} stroke="#222" strokeWidth={2} />
             {openings.map(opening => renderAerialOpening(opening, zoom, 50))}
-            {renderOpeningMeasurements(openings, containerSize.height, 110)}
+            {renderOpeningMeasurements(openings, containerSize.height, 40)}
           </Layer>
         </Stage>
       </div>

@@ -130,10 +130,6 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
       </div>
       {!collapsed && (
         <div className="mt-1 flex flex-col gap-2">
-          <ColorDropdown
-            value={opening.color}
-            onChange={onColorChange}
-          />
             <div className="flex items-center gap-2 px-8 mb-2">
               <label htmlFor={`shape-select-${openingIdx}`} className="text-left text-zinc-400 w-36">Shape:</label>
               <select
@@ -146,6 +142,10 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
                 <option value="CIRCLE">Circle</option>
               </select>
             </div>
+            <ColorDropdown
+              value={opening.color}
+              onChange={onColorChange}
+            />
           {openingInputs[opening.shape].map(input => (
             <NumberInput
               key={input.key}
