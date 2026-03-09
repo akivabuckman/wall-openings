@@ -1,18 +1,19 @@
 import { Dispatch, SetStateAction } from "react";
 import { Socket } from "socket.io-client";
-import { Opening } from "../types";
+import { Opening, SaveStatus } from "../types";
 import { toast } from "react-toastify";
 
 export const registerOpeningHandlers = (
 	socket: Socket, 
 	setOpenings: Dispatch<SetStateAction<Opening[]>>,
 	setWallId: (wallId: string) => void,
-	setSaveStatus?: (status: 'saving' | 'saved') => void
+	setSaveStatus?: (status: SaveStatus) => void
 ) => {
 	socket.on('initialOpenings', (data: { type: string, payload: { wallId: string, openings: Opening[] }}) => {
 		if (data?.payload?.wallId) {
 			setWallId(data.payload.wallId);
 		}
+		setSaveStatus?.('saved');
 		if (!data?.payload?.openings) return setOpenings([]);
 		const openings: Opening[] = data.payload.openings.map((o, idx) => {
 			if (o.shape === 'RECTANGLE') {
@@ -69,7 +70,7 @@ export const registerOpeningHandlers = (
 	});
 
 	socket.on('error', (data: { type: string, payload: { message: string }}) => {
-		setSaveStatus?.('saved');
+		setSaveStatus?.('error');
 		toast.error("Something went wrong" + (data.payload.message ? `: ${data.payload.message}` : ""));
 	});
 };

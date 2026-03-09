@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { Opening } from "../types";
+import { Opening, SaveStatus } from "../types";
 import OpeningsList from "./OpeningsList";
 import { Share, Check } from "lucide-react";
 
@@ -9,8 +9,8 @@ interface SidebarProps {
   openings: Opening[];
   hoveredOpeningId: number | null;
   setOpenings: Dispatch<SetStateAction<Opening[]>>;
-  saveStatus: 'saving' | 'saved';
-  setSaveStatus: (status: 'saving' | 'saved') => void;
+  saveStatus: SaveStatus;
+  setSaveStatus: (status: SaveStatus) => void;
 }
 
 const Sidebar = ({ wallId, openings, hoveredOpeningId, setOpenings, saveStatus, setSaveStatus }: SidebarProps) => {

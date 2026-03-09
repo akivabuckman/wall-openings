@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Sidebar from './Sidebar';
 import MainPanel from './MainPanel';
-import { Opening } from '../types';
+import { Opening, SaveStatus } from '../types';
 import { defaultOpenings, shapeMoveDebounceMs } from '../constants';
 import { initializeSocket } from '../utils/socketManager';
 import { emitOpeningChange } from '../utils/socket';
@@ -11,9 +11,8 @@ const WallEditor = () => {
   const [openings, setOpenings] = useState<Opening[]>(defaultOpenings);
   const [lastChangedOpening, setLastChangedOpening] = useState<Opening | null>(null);
   const [hoveredOpeningId, setHoveredOpeningId] = useState<number | null>(null);
-  const [openingsLoading, setOpeningsLoading] = useState<boolean>(false);
   const [wallId, setWallIdState] = useState<string>("");
-  const [saveStatus, setSaveStatus] = useState<'saving' | 'saved'>('saved');
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('saving');
   const isInitialized = useRef<boolean>(false);
   const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
