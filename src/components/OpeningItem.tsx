@@ -1,4 +1,4 @@
-import { CircleOpening, Opening, RectangleOpening } from "../types";
+import { CircleOpening, Opening, RectangleOpening, SaveStatus } from "../types";
 import { emitDeleteOpening, emitOpeningChange } from "../utils/socket";
 import { updateOpeningField } from "../utils/renderUtils";
 import NumberInput from "./NumberInput";
@@ -16,7 +16,8 @@ interface OpeningItemProps {
   onDelete: (idx: number) => void;
   isShapeHovered?: boolean;
   wallId?: string;
-  setSaveStatus?: (status: 'saving' | 'saved') => void;
+  setSaveStatus?: (status: SaveStatus) => void;
+  saveStatus?: SaveStatus;
 }
 
 const openingInputs = {
@@ -35,7 +36,7 @@ const openingInputs = {
   ],
 };
 
-const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenings, onDelete, isShapeHovered, wallId, setSaveStatus }: OpeningItemProps) => {
+const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenings, onDelete, isShapeHovered, wallId, setSaveStatus, saveStatus }: OpeningItemProps) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const typeIcon = opening.shape === 'RECTANGLE'
     ? <Square className="w-5 h-5" strokeWidth={2.2} style={{ color: opening.color }} />
@@ -80,15 +81,20 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
         radius: 25,
       };
     }
+    if (saveStatus === 'error') {
+      setOpenings(prev => prev.map(o => o.id === opening.id ? updatedOpening : o));
+      return;
+    }
     emitOpeningChange(updatedOpening, wallId);
     setSaveStatus?.('saving');
   };
 
   const handleConfirmDelete = () => {
     setShowModal(false);
+    onDelete && onDelete(openingIdx);
+    if (saveStatus === 'error') return;
     setSaveStatus?.('saving');
     emitDeleteOpening(opening.id, wallId);
-    onDelete && onDelete(openingIdx);
   };
 
   return (

@@ -41,8 +41,22 @@ const OpeningsList = ({ openings, setOpenings, hoveredOpeningId, wallId, saveSta
   };
 
   const handleAddOpening = () => {
+    if (saveStatus === 'error') {
+      setOpenings(prev => [...prev, {
+        shape: 'RECTANGLE',
+        width: 100,
+        height: 200,
+        x: 220,
+        elevation: 0,
+        color: '#ef4444',
+        fromPrevious: 110,
+        id: Date.now(),
+        xIndex: prev.length,
+      }]);
+      return;
+    }
     setSaveStatus('saving');
-    emitRequestNewOpening(wallId)
+    emitRequestNewOpening(wallId);
   };
 
   return (
@@ -69,7 +83,7 @@ const OpeningsList = ({ openings, setOpenings, hoveredOpeningId, wallId, saveSta
         </span>
         </div>
         <p className="text-xs text-zinc-400 mb-2">{
-          saveStatus === 'error' ? '*Wall failed to save, but you can still edit it without saving' : '*All changes are immediately visible to all users viewing the wall'
+          saveStatus === 'error' ? '*Wall failed to load and save, but you can still edit it without saving' : '*All changes are immediately visible to all users viewing the wall'
         }</p>
         <div>
       </div>
@@ -89,6 +103,7 @@ const OpeningsList = ({ openings, setOpenings, hoveredOpeningId, wallId, saveSta
             }}
             isShapeHovered={hoveredOpeningId === opening.id}
             wallId={wallId}
+            saveStatus={saveStatus}
             setSaveStatus={setSaveStatus}
           />
         ))}
