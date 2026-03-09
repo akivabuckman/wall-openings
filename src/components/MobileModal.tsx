@@ -1,10 +1,10 @@
-import React from "react";
+import { FC } from "react";
 
 interface MobileModalProps {
   onClose: () => void;
 }
 
-const MobileModal: React.FC<MobileModalProps> = ({ onClose }) => (
+const MobileModal: FC<MobileModalProps> = ({ onClose }) => (
   <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center w-screen h-screen">
     <div
       className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full text-center flex flex-col items-center justify-center"

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, FC } from "react";
 import { colorOptions } from "../constants";
 
 interface ColorDropdownProps {
@@ -6,7 +6,7 @@ interface ColorDropdownProps {
   onChange: (color: string) => void;
 }
 
-const ColorDropdown: React.FC<ColorDropdownProps> = ({ value, onChange }) => {
+const ColorDropdown: FC<ColorDropdownProps> = ({ value, onChange }) => {
   const [open, setOpen] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement>(null);
   const selectedOption = colorOptions.find(opt => opt.value.toLowerCase() === value?.toLowerCase() || opt.name.toLowerCase() === value?.toLowerCase()) ?? colorOptions[0];
