@@ -11,7 +11,7 @@ interface OpeningItemProps {
   opening: Opening;
   openingIdx: number;
   collapsed: boolean;
-  toggleCollapse: (idx: number) => void;
+  toggleCollapse: () => void;
   setOpenings: Dispatch<SetStateAction<Opening[]>>;
   onDelete: (idx: number) => void;
   isShapeHovered?: boolean;
@@ -36,7 +36,7 @@ const openingInputs = {
 };
 
 const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenings, onDelete, isShapeHovered, wallId, setSaveStatus }: OpeningItemProps) => {
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const typeIcon = opening.shape === 'RECTANGLE'
     ? <Square className="w-5 h-5" strokeWidth={2.2} style={{ color: opening.color }} />
     : <LucideCircle className="w-5 h-5" strokeWidth={2.2} style={{ color: opening.color }} />;
@@ -93,11 +93,14 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
 
   return (
     <li className={
-      `w-80 bg-zinc-800 rounded-lg px-4 py-3 text-zinc-100 text-sm flex flex-col gap-2 shadow border border-2 transition-all ${(generateBorderColorClass(opening.color, !!isShapeHovered))}`    }>
-      <div className="flex items-center gap-3 w-full">
+      `w-80 bg-zinc-800 rounded-lg px-4 py-3 text-zinc-100 text-sm flex flex-col gap-2 shadow border border-2 transition-all ${collapsed ? 'cursor-pointer' : ''} ${(generateBorderColorClass(opening.color, !!isShapeHovered))}`}
+      onClick={collapsed ? toggleCollapse : undefined}
+    >
+      <div className="flex items-center gap-3 w-full cursor-pointer" 
+          onClick={e => { e.stopPropagation(); toggleCollapse(); }}
+      >
         <button
-          className="flex items-center gap-3 flex-1 text-left focus:outline-none group"
-          onClick={() => toggleCollapse(openingIdx)}
+          className="flex items-center gap-3 flex-1 text-left focus:outline-none group cursor-pointer"
           aria-expanded={!collapsed}
           tabIndex={0}
         >
@@ -110,12 +113,12 @@ const OpeningItem = ({ opening, openingIdx, collapsed, toggleCollapse, setOpenin
             {typeIcon}
             <span className="capitalize tracking-wide">{opening.shape.toLowerCase()}</span>
           </span>
-          <span className="ml-auto text-xs text-zinc-400 font-mono">#{openingIdx}</span>
+          <span className="ml-auto text-xs text-zinc-400 font-mono">#{openingIdx + 1}</span>
         </button>
         <button
-          className="ml-2 p-1 rounded hover:bg-red-600 transition"
+          className="ml-2 p-1 rounded hover:bg-red-600 transition cursor-pointer"
           title="Delete opening"
-          onClick={() => setShowModal(true)}
+          onClick={e => { e.stopPropagation(); setShowModal(true); }}
         >
           <Trash2 className="w-4 h-4 text-red-500" />
         </button>

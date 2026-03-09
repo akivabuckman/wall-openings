@@ -20,3 +20,5 @@ export interface CircleOpening extends OpeningBase {
 }
 
 export type Opening = RectangleOpening | CircleOpening;
+
+export type SaveStatus = 'saving' | 'saved' | 'error';
