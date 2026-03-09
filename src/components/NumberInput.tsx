@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 
 interface NumberInputProps {
   label: string;
@@ -8,7 +8,7 @@ interface NumberInputProps {
   className?: string;
 }
 
-const NumberInput: React.FC<NumberInputProps> = ({ label, value, onChange, id, className }) => (
+const NumberInput: FC<NumberInputProps> = ({ label, value, onChange, id, className }) => (
   <div className="flex items-center gap-2 px-8">
     <label htmlFor={id} className="text-left text-zinc-400 w-36">{label}</label>
     <input
