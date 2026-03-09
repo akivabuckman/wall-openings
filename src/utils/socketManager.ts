@@ -26,6 +26,10 @@ export function initializeSocket(callbacks: SocketCallbacks, wallIdParam: string
 			callbacks.onConnect(wallIdParam);
 		}
 	});
+
+	socket.on('connect_error', () => {
+		callbacks.setSaveStatus?.('error');
+	});
 	
 	return socket;
 }

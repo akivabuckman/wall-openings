@@ -13,6 +13,11 @@ const WallEditor = () => {
   const [hoveredOpeningId, setHoveredOpeningId] = useState<number | null>(null);
   const [wallId, setWallIdState] = useState<string>("");
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('saving');
+  const saveStatusRef = useRef<SaveStatus>('saving');
+  const setSaveStatusAndRef = (status: SaveStatus) => {
+    saveStatusRef.current = status;
+    setSaveStatus(status);
+  };
   const isInitialized = useRef<boolean>(false);
   const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -46,14 +51,15 @@ const WallEditor = () => {
     initializeSocket({
       setOpenings,
       setWallId,
-      setSaveStatus,
+      setSaveStatus: setSaveStatusAndRef,
     }, wallIdValid ? wallIdParam : null);
   }, []);
 
   // Debounce and emit only the last changed opening
   useEffect(() => {
     if (!lastChangedOpening) return;
-    setSaveStatus('saving');
+    if (saveStatusRef.current === 'error') return;
+    setSaveStatusAndRef('saving');
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
@@ -77,7 +83,7 @@ const WallEditor = () => {
         hoveredOpeningId={hoveredOpeningId} 
         setOpenings={setOpenings}
         saveStatus={saveStatus}
-        setSaveStatus={setSaveStatus}
+        setSaveStatus={setSaveStatusAndRef}
       />
       <MainPanel 
         openings={openings} 
