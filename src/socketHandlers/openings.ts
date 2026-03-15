@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { Socket } from "socket.io-client";
-import { ErrorPayload, InitialOpeningsPayload, Opening, OpeningDeletedPayload, SaveStatus, SocketEvent } from "../types";
+import { ErrorPayload, InitialOpeningsPayload, Opening, OpeningDeletedPayload, SaveStatus, SocketEvent, SocketResponse } from "../types";
 import { toast } from "react-toastify";
 
 export const registerOpeningHandlers = (
@@ -8,8 +8,12 @@ export const registerOpeningHandlers = (
     setOpenings: Dispatch<SetStateAction<Opening[]>>,
     setWallId: (wallId: string) => void,
     setSaveStatus?: (status: SaveStatus) => void,
-    setLastEntryId?: (lastEntryId: string) => void
+    setLastEntryId?: (lastEntryId: string) => void,
+    setRedisAvailable?: (available: boolean) => void
 ) => {
+    socket.on("redisError", () => {
+        setRedisAvailable?.(false);
+    });
     socket.on("initialOpenings", (data: SocketEvent<InitialOpeningsPayload>) => {
 		setLastEntryId?.(data._meta.lastEntryId);
 		if (data.payload.wallId) {
@@ -75,6 +79,20 @@ export const registerOpeningHandlers = (
         const { openingId } = data.payload;
         setSaveStatus?.("saved");
         setOpenings((prev: Opening[]) => prev.filter((o) => o.id !== openingId));
+    });
+
+    socket.on("openingUndone", (data: SocketEvent<Opening>) => {
+        setLastEntryId?.(data._meta.lastEntryId);
+
+        const undoneOpening = data.payload;
+        setSaveStatus?.("saved");
+        setOpenings((prev: Opening[]) => {
+            const idx = prev.findIndex((o) => o.id === undoneOpening.id);
+            if (idx === -1) return prev;
+            const openings = [...prev];
+            openings[idx] = { ...openings[idx], ...undoneOpening };
+            return openings;
+        });
     });
 
     socket.on("error", (data: SocketEvent<ErrorPayload>) => {

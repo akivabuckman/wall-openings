@@ -64,6 +64,7 @@ export interface SocketCallbacks {
   setSaveStatus?: (status: SaveStatus) => void;
   setLastEntryId?: (lastEntryId: string) => void;
   getLastEntryId?: () => string | null;
+  setRedisAvailable?: (available: boolean) => void;
   getWallId?: () => string | null;
   onConnect?: (wallId: string | null) => void;
 };

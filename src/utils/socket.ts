@@ -52,6 +52,11 @@ export const emitRequestNewOpening = (wallId?: string) => {
   socket.emit('requestNewOpening', {wallId, source: "client"});
 };
 
+export const emitRequestUndo = (wallId: string) => {
+  const socket = getSocket();
+  socket.emit('requestUndo', {wallId, source: "client"});
+};
+
 export const requestReconnect = (wallId: string, lastEntryId: string) => {
   if (!wallId) {
     toast.error("Wall ID is required to request a reconnect");

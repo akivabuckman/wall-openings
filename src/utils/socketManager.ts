@@ -22,7 +22,8 @@ export function initializeSocket(callbacks: SocketCallbacks, wallIdParam: string
 		callbacks.setOpenings,
 		callbacks.setWallId,
 		setSaveStatus,
-		callbacks.setLastEntryId
+		callbacks.setLastEntryId,
+		callbacks.setRedisAvailable
 	);
 	registerWallHandlers(socket);
 	
