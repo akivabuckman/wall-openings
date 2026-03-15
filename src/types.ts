@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 interface OpeningBase {
   x: number;
   elevation: number;
@@ -22,3 +24,46 @@ export interface CircleOpening extends OpeningBase {
 export type Opening = RectangleOpening | CircleOpening;
 
 export type SaveStatus = 'saving' | 'saved' | 'error';
+
+export type ResponseType = string;
+
+export type SocketMeta = {
+  lastEntryId: string;
+  eventId: string;
+  replayed?: boolean;
+};
+
+export type SocketResponse<TPayload = any> = {
+  type: ResponseType;
+  source?: "server";
+  payload?: TPayload;
+  _meta?: SocketMeta;
+};
+
+export type SocketEvent<TPayload> = SocketResponse<TPayload> & {
+  payload: TPayload;
+  _meta: SocketMeta;
+};
+
+export type InitialOpeningsPayload = {
+    wallId: string;
+    openings: Opening[];
+};
+
+export type OpeningDeletedPayload = {
+    openingId: number;
+};
+
+export type ErrorPayload = {
+    message: string;
+};
+
+export interface SocketCallbacks {
+  setOpenings: Dispatch<SetStateAction<Opening[]>>;
+  setWallId: (wallId: string) => void;
+  setSaveStatus?: (status: SaveStatus) => void;
+  setLastEntryId?: (lastEntryId: string) => void;
+  getLastEntryId?: () => string | null;
+  getWallId?: () => string | null;
+  onConnect?: (wallId: string | null) => void;
+};

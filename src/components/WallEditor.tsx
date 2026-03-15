@@ -12,8 +12,11 @@ const WallEditor = () => {
   const [lastChangedOpening, setLastChangedOpening] = useState<Opening | null>(null);
   const [hoveredOpeningId, setHoveredOpeningId] = useState<number | null>(null);
   const [wallId, setWallIdState] = useState<string>("");
+  const wallIdRef = useRef<string>("");
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('saving');
   const saveStatusRef = useRef<SaveStatus>('saving');
+  const lastEntryIdRef = useRef<string | null>(null);
+  const isSocketDrivenUpdateRef = useRef<boolean>(false);
   const setSaveStatusAndRef = (status: SaveStatus) => {
     saveStatusRef.current = status;
     setSaveStatus(status);
@@ -23,6 +26,7 @@ const WallEditor = () => {
 
   // Update wallId in both state and URL
   const setWallId = (id: string) => {
+    wallIdRef.current = id;
     setWallIdState(id);
     updateWallIdInUrl(id);
   };
@@ -30,6 +34,12 @@ const WallEditor = () => {
   // Detect which opening was changed and set lastChangedOpening
   const prevOpeningsRef = useRef<Opening[]>(openings);
   useEffect(() => {
+    if (isSocketDrivenUpdateRef.current) {
+      isSocketDrivenUpdateRef.current = false;
+      prevOpeningsRef.current = openings;
+      return;
+    }
+
     const prevOpenings = prevOpeningsRef.current;
     const changed = getChangedOpening(prevOpenings, openings);
     if (changed) setLastChangedOpening(changed);
@@ -49,9 +59,17 @@ const WallEditor = () => {
     }
 
     initializeSocket({
-      setOpenings,
+      setOpenings: (next) => {
+        isSocketDrivenUpdateRef.current = true;
+        setOpenings(next);
+      },
       setWallId,
       setSaveStatus: setSaveStatusAndRef,
+      setLastEntryId: (lastEntryId: string) => {
+        lastEntryIdRef.current = lastEntryId;
+      },
+      getLastEntryId: () => lastEntryIdRef.current,
+      getWallId: () => wallIdRef.current || null,
     }, wallIdValid ? wallIdParam : null);
   }, []);
 

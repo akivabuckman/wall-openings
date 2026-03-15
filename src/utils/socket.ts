@@ -1,6 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import { Opening } from "../types";
 import { SOCKET_URL } from "../constants";
+import { toast } from "react-toastify";
 
 // Singleton socket instance
 let socketInstance: Socket | null = null;
@@ -24,7 +25,7 @@ export const emitWallJoin = (wallId: string | null) => {
 
 export const emitOpeningChange = (opening: Opening, wallId?: string) => {
   if (!wallId) {
-    console.error("Wall ID is required to emit opening changes");
+    toast.error("Wall ID is required to emit opening changes");
     return;
   }
   const { xIndex, ...formattedOpening } = opening;
@@ -35,7 +36,7 @@ export const emitOpeningChange = (opening: Opening, wallId?: string) => {
 
 export const emitDeleteOpening = (openingId: number, wallId?: string) => {
   if (!wallId) {
-    console.error("Wall ID is required to delete an opening");
+    toast.error("Wall ID is required to delete an opening");
     return;
   }
   const socket = getSocket();
@@ -44,11 +45,22 @@ export const emitDeleteOpening = (openingId: number, wallId?: string) => {
 
 export const emitRequestNewOpening = (wallId?: string) => {
   if (!wallId) {
-    console.error("Wall ID is required to request a new opening");
+    toast.error("Wall ID is required to request a new opening");
     return;
   }
   const socket = getSocket();
   socket.emit('requestNewOpening', {wallId, source: "client"});
 };
 
-export default getSocket;
+export const requestReconnect = (wallId: string, lastEntryId: string) => {
+  if (!wallId) {
+    toast.error("Wall ID is required to request a reconnect");
+    return;
+  }
+  if (!lastEntryId) {
+    toast.error("Last entry ID is required to request a reconnect");
+    return;
+  }
+  const socket = getSocket();
+  socket.emit('requestReconnect', {wallId, lastEntryId, source: "client"});
+};
