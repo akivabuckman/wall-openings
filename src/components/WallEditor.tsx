@@ -4,7 +4,7 @@ import MainPanel from './MainPanel';
 import { Opening, SaveStatus } from '../types';
 import { defaultOpenings, shapeMoveDebounceMs } from '../constants';
 import { initializeSocket } from '../utils/socketManager';
-import { emitOpeningChange } from '../utils/socket';
+import { emitOpeningChange, emitRequestUndo } from '../utils/socket';
 import { updateWallIdInUrl, getWallIdFromUrl, isValidWallId, getChangedOpening } from '../utils/utils';
 
 const WallEditor = () => {
@@ -12,8 +12,13 @@ const WallEditor = () => {
   const [lastChangedOpening, setLastChangedOpening] = useState<Opening | null>(null);
   const [hoveredOpeningId, setHoveredOpeningId] = useState<number | null>(null);
   const [wallId, setWallIdState] = useState<string>("");
+  const wallIdRef = useRef<string>("");
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('saving');
   const saveStatusRef = useRef<SaveStatus>('saving');
+  const lastEntryIdRef = useRef<string | null>(null);
+  const isSocketDrivenUpdateRef = useRef<boolean>(false);
+  const [redisAvailable, setRedisAvailable] = useState<boolean>(true);
+  const redisAvailableRef = useRef<boolean>(true);
   const setSaveStatusAndRef = (status: SaveStatus) => {
     saveStatusRef.current = status;
     setSaveStatus(status);
@@ -23,6 +28,7 @@ const WallEditor = () => {
 
   // Update wallId in both state and URL
   const setWallId = (id: string) => {
+    wallIdRef.current = id;
     setWallIdState(id);
     updateWallIdInUrl(id);
   };
@@ -30,6 +36,12 @@ const WallEditor = () => {
   // Detect which opening was changed and set lastChangedOpening
   const prevOpeningsRef = useRef<Opening[]>(openings);
   useEffect(() => {
+    if (isSocketDrivenUpdateRef.current) {
+      isSocketDrivenUpdateRef.current = false;
+      prevOpeningsRef.current = openings;
+      return;
+    }
+
     const prevOpenings = prevOpeningsRef.current;
     const changed = getChangedOpening(prevOpenings, openings);
     if (changed) setLastChangedOpening(changed);
@@ -49,10 +61,36 @@ const WallEditor = () => {
     }
 
     initializeSocket({
-      setOpenings,
+      setOpenings: (next) => {
+        isSocketDrivenUpdateRef.current = true;
+        setOpenings(next);
+      },
       setWallId,
       setSaveStatus: setSaveStatusAndRef,
+      setLastEntryId: (lastEntryId: string) => {
+        lastEntryIdRef.current = lastEntryId;
+      },
+      setRedisAvailable: (available: boolean) => {
+        redisAvailableRef.current = available;
+        setRedisAvailable(available);
+      },
+      getLastEntryId: () => lastEntryIdRef.current,
+      getWallId: () => wallIdRef.current || null,
     }, wallIdValid ? wallIdParam : null);
+  }, []);
+
+  // Ctrl+Z undo
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        e.preventDefault();
+        if (saveStatusRef.current === 'error') return;
+        if (!redisAvailableRef.current) return;
+        emitRequestUndo(wallIdRef.current);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   // Debounce and emit only the last changed opening
@@ -84,6 +122,7 @@ const WallEditor = () => {
         setOpenings={setOpenings}
         saveStatus={saveStatus}
         setSaveStatus={setSaveStatusAndRef}
+        redisAvailable={redisAvailable}
       />
       <MainPanel 
         openings={openings} 
@@ -92,7 +131,7 @@ const WallEditor = () => {
         setOpenings={setOpenings} 
       />
       <footer className="fixed bottom-0 left-0 right-0 text-center text-zinc-200 text-xs py-2 px-4 bg-gradient-to-r from-blue-900 via-orange-900 to-blue-900 border-t border-zinc-600 select-none pointer-events-none tracking-wide">
-        ✨ Everything here was made by yours truly — 🖥️ frontend, ⚙️ backend, 🔌 websocket, 🚀 CI, and ☁️ AWS. ✨
+        ✨ Everything here was made by yours truly — 🖥️ frontend, ⚙️ backend, 🔌 websocket, 🗄️ Redis, 🚀 CI, and ☁️ AWS. ✨
       </footer>
     </div>
   );

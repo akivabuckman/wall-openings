@@ -11,9 +11,10 @@ interface SidebarProps {
   setOpenings: Dispatch<SetStateAction<Opening[]>>;
   saveStatus: SaveStatus;
   setSaveStatus: (status: SaveStatus) => void;
+  redisAvailable: boolean;
 }
 
-const Sidebar = ({ wallId, openings, hoveredOpeningId, setOpenings, saveStatus, setSaveStatus }: SidebarProps) => {
+const Sidebar = ({ wallId, openings, hoveredOpeningId, setOpenings, saveStatus, setSaveStatus, redisAvailable }: SidebarProps) => {
   const [copied, setCopied] = useState<boolean>(false);
   const handleCopyWallId = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -43,7 +44,7 @@ const Sidebar = ({ wallId, openings, hoveredOpeningId, setOpenings, saveStatus, 
           <p className="text-xs text-zinc-400 mt-1">All walls are automatically deleted 7 days after they're last updated</p>
         </div>
       )}
-      <OpeningsList openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} wallId={wallId} saveStatus={saveStatus} setSaveStatus={setSaveStatus} />
+      <OpeningsList openings={openings} setOpenings={setOpenings} hoveredOpeningId={hoveredOpeningId} wallId={wallId} saveStatus={saveStatus} setSaveStatus={setSaveStatus} redisAvailable={redisAvailable} />
     </aside>
   );
 };

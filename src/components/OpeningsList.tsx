@@ -1,8 +1,8 @@
 import { Opening, SaveStatus } from "../types";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import OpeningItem from "./OpeningItem";
-import { Plus } from "lucide-react";
-import { emitRequestNewOpening } from "../utils/socket";
+import { Plus, Undo2 } from "lucide-react";
+import { emitRequestNewOpening, emitRequestUndo } from "../utils/socket";
 
 interface OpeningsListProps {
   openings: Opening[];
@@ -11,9 +11,10 @@ interface OpeningsListProps {
   wallId?: string;
   saveStatus: SaveStatus;
   setSaveStatus: (status: SaveStatus) => void;
+  redisAvailable: boolean;
 }
 
-const OpeningsList = ({ openings, setOpenings, hoveredOpeningId, wallId, saveStatus, setSaveStatus }: OpeningsListProps) => {
+const OpeningsList = ({ openings, setOpenings, hoveredOpeningId, wallId, saveStatus, setSaveStatus, redisAvailable }: OpeningsListProps) => {
   const [collapsedIds, setCollapsedIds] = useState<Set<number>>(new Set());
   const seenIdsRef = useRef<Set<number>>(new Set());
 
@@ -70,6 +71,17 @@ const OpeningsList = ({ openings, setOpenings, hoveredOpeningId, wallId, saveSta
           <Plus className="w-4 h-4" />
           Add Opening
         </button>
+        {saveStatus !== 'error' && redisAvailable && (
+          <button
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-zinc-700 hover:bg-zinc-600 text-zinc-300 text-xs font-semibold shadow border border-zinc-600 transition"
+            onClick={() => emitRequestUndo(wallId ?? '')}
+            title="Undo (Ctrl+Z)"
+            style={{ cursor: "pointer" }}
+          >
+            <Undo2 className="w-3.5 h-3.5" />
+            Undo
+          </button>
+        )}
         <span
           className={`px-3 py-1.5 rounded text-xs font-semibold shadow border ${
             saveStatus === 'saving'
