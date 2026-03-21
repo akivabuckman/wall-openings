@@ -21,8 +21,9 @@ Browser (React + Konva)
         │
         └──▶  Backend container   (Express + Socket.IO)
                     │
-                    ▼
-             PostgreSQL (walls & openings)
+                    ├──▶ PostgreSQL on AWS RDS       (walls & openings)
+                    │
+                    └──▶ Redis on AWS ElastiCache    (undo stacks & event streams)  [disabled — see note below]
 
 AWS Lambda  ──▶  DELETE /old-walls  (scheduled cleanup - removes walls not updated in 7+ days)
 ```
@@ -129,6 +130,14 @@ The pipeline ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)):
 | `EC2_HOST` | Secret | EC2 public IP or hostname |
 | `EC2_SSH_KEY` | Secret | Private SSH key for EC2 |
 | `ECR_REGISTRY` | Variable | ECR registry URL |
+
+---
+
+## Undo & Event Replay *(disabled)*
+
+The backend supports a **per-wall undo stack** and **Socket.IO event replay** backed by **AWS ElastiCache (Redis)**. Each wall maintains a Redis Stream of broadcast events (for reconnect replay) and a Redis List acting as an undo stack of up to 20 reversible operations. When a client triggers an undo, the server pops the latest snapshot and restores the opening to its previous state.
+
+This feature is currently **disabled in production** — the ElastiCache instance was deprovisioned to avoid ongoing costs on a personal project. The implementation remains in the backend codebase and can be re-enabled by setting the `REDIS_URL` environment variable. The backend degrades gracefully when Redis is unavailable: all Redis-dependent paths are no-ops, so the core app continues to function normally.
 
 ---
 
